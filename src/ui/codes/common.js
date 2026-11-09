@@ -1,5 +1,7 @@
 // Kod hesaplayıcıları için ortak arayüz parçaları (seçim kutusu, metin alanı, çıktı kartı).
 import { el } from '../dom.js';
+import { resultRow } from '../results.js';
+import { getParam, setParams } from '../urlstate.js';
 
 let counter = 0;
 const nextId = (prefix) => `${prefix}-${(counter += 1)}`;
@@ -33,22 +35,32 @@ export function selectField({ label, options, value, withSwatch = false }) {
   };
 }
 
-/** Metin girişi (kod girmek için). */
-export function textField({ label, value = '', placeholder = '', hint = '' }) {
+/**
+ * Metin girişi (kod girmek için). Değer adres çubuğunda `param` adıyla tutulur (varsayılan "code").
+ */
+export function textField({ label, value = '', placeholder = '', hint = '', param = 'code' }) {
   const id = nextId('txt');
+  const hintId = `${id}-hint`;
+  const errorId = `${id}-err`;
   const input = el('input', {
-    id, type: 'text', value, placeholder, autocomplete: 'off', spellcheck: 'false', class: 'code-input',
+    id, type: 'text', value: getParam(param) ?? value, placeholder, autocomplete: 'off', spellcheck: 'false', class: 'code-input',
+    'aria-describedby': [hint ? hintId : null, errorId].filter(Boolean).join(' '),
   });
+  const errorBox = el('div', { class: 'field-error', id: errorId });
+  input.addEventListener('input', () => setParams({ [param]: input.value.trim() }));
   const element = el('div', { class: 'field' },
     el('label', { for: id }, label),
     el('div', { class: 'field-row' }, input),
-    hint ? el('div', { class: 'field-hint' }, hint) : null);
+    hint ? el('div', { class: 'field-hint', id: hintId }, hint) : null,
+    errorBox);
   return {
     element,
     get value() { return input.value; },
-    setInvalid(flag) {
+    /** Geçersizse alanın altında mesaj gösterir. */
+    setInvalid(flag, message = '') {
       if (flag) input.setAttribute('aria-invalid', 'true');
       else input.removeAttribute('aria-invalid');
+      errorBox.textContent = flag ? message : '';
     },
     onChange(cb) { input.addEventListener('input', cb); },
   };
@@ -64,8 +76,7 @@ export function outputCard(title = 'Sonuçlar') {
     element,
     show({ rows = [], errors = [], warnings = [] }) {
       list.replaceChildren(...(rows.length
-        ? rows.map(({ label, value }) =>
-          el('div', { class: 'result-row' }, el('dt', {}, label), el('dd', {}, value)))
+        ? rows.map(resultRow)
         : [el('p', { class: 'result-empty' }, errors.length ? 'Sonuç için girdiyi düzeltin.' : '—')]));
       messages.replaceChildren(
         ...errors.map((m) => el('div', { class: 'msg msg-error' }, m)),

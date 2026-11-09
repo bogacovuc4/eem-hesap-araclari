@@ -1,3 +1,5 @@
+import { icon } from './icons.js';
+
 const STORAGE_KEY = 'eem-theme';
 
 function readStored() {
@@ -24,9 +26,12 @@ function currentTheme() {
 }
 
 function updateButton(button) {
-  const next = currentTheme() === 'dark' ? 'açık' : 'koyu';
+  const dark = currentTheme() === 'dark';
+  const next = dark ? 'açık' : 'koyu';
   button.title = `Temayı ${next} yap`;
   button.setAttribute('aria-label', `Temayı ${next} yap`);
+  // Simge, geçilecek temayı gösterir: koyu temadayken güneş, açıkta ay.
+  button.replaceChildren(icon(dark ? 'sun' : 'moon', { size: 18 }));
 }
 
 export function initTheme(button) {

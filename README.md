@@ -15,6 +15,16 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 
 Her hesaplayıcı formülü, geçerlilik aralığını ve varsayımları ekranda gösterir. Emin olunamayan yaklaşımlar arayüzde **doğrulanmalı** etiketiyle işaretlidir. Şu an bu etiket spiral anten tahmininde ve rüzgâr profilindeki tipik α / z₀ tablolarında var.
 
+### Kullanım kolaylıkları
+
+- **Arama:** Kenar çubuğundaki ya da ana sayfadaki kutuya yazın (`/` tuşu odaklar, Enter ilk sonuca gider). Türkçe karakterler fark etmez: "direnc" de "Direnç"i bulur.
+- **Paylaşılabilir bağlantı:** Girdiğiniz değerler, birimler ve seçili sekme adres çubuğunda tutulur (ör. `#/rf/microstrip?mode=synthesis&z0=75`). "Bağlantıyı kopyala" ile aynı hesabı başkasına gönderebilirsiniz.
+- **Sonucu kopyalama:** Her sonuç satırının yanındaki düğme değeri panoya kopyalar.
+- **Son kullanılanlar:** Ana sayfada en son açtığınız hesaplayıcılar listelenir (yalnızca bu tarayıcıda saklanır).
+- **Erişilebilirlik:** Hatalı girdi mesajı ilgili alanın hemen altında çıkar ve alana bağlıdır (`aria-describedby`). Klavye odağı her kontrolde görünür, sekmeler ok tuşlarıyla değişir. Renk kontrastı açık ve koyu temada WCAG AA eşiklerini sağlar. Azaltılmış hareket tercihinde geçişler kapanır.
+
+Arayüz iyileştirmeleri [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill'inin "Minimalism & Swiss" stil önerisi ve UX kurallarıyla yapılan bir denetime dayanır.
+
 ## Çalıştırma
 
 Tarayıcılar `file://` adresinden açılan sayfalarda ES modüllerini engeller. Bu yüzden `index.html` dosyasına çift tıklamak işe yaramaz; siteyi küçük bir yerel sunucuyla açın. Proje klasöründe aşağıdakilerden birini çalıştırın:

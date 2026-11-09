@@ -32,7 +32,7 @@ function decodePanel() {
       });
     } catch (err) {
       if (!(err instanceof RangeError)) throw err;
-      code.setInvalid(true);
+      code.setInvalid(true, err.message);
       output.show({ errors: [err.message] });
     }
   }
