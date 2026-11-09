@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EEM Hesap Araçları</title>
+  <meta name="description" content="Elektrik-elektronik mühendisliği için anten/RF, devre ve rüzgâr enerjisi hesaplayıcıları.">
+  <script>
+    // Temayı ilk boyamadan önce uygula (yanıp sönmeyi önler).
+    try {
+      var t = localStorage.getItem('eem-theme');
+      if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+    } catch (e) { /* localStorage kapalı olabilir */ }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <button id="menu-toggle" class="icon-btn" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Menüyü aç/kapat">☰</button>
+    <a class="brand" href="#/">EEM Hesap Araçları</a>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Temayı değiştir">◐</button>
+  </header>
+  <div class="layout">
+    <nav id="sidebar" class="sidebar" aria-label="Hesaplayıcılar"></nav>
+    <main id="content" class="content">
+      <noscript>Bu site JavaScript gerektirir.</noscript>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "name": "eem-hesap-araclari",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Elektrik-elektronik mühendisliği hesap araçları (bağımlılıksız, saf HTML/CSS/JS)",
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  }
+}
