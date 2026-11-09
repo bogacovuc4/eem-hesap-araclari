@@ -1,5 +1,117 @@
-import { ETA0 } from './constants.js';
+import { C0, ETA0 } from './constants.js';
 import { assert } from './validate.js';
+
+// ---------------------------------------------------------------------------
+// Dalga boyu ↔ frekans
+// ---------------------------------------------------------------------------
+
+/** Ortamdaki dalga boyu: λ = c / (f·√εr). f Hz, sonuç m. */
+export function wavelengthFromFrequency({ f, er = 1 }) {
+  assert(f > 0, 'Frekans sıfırdan büyük olmalı.');
+  assert(er >= 1, 'εr en az 1 olmalı.');
+  return C0 / (f * Math.sqrt(er));
+}
+
+/** Ortamdaki dalga boyundan frekans: f = c / (λ·√εr). λ m, sonuç Hz. */
+export function frequencyFromWavelength({ wavelength, er = 1 }) {
+  assert(wavelength > 0, 'Dalga boyu sıfırdan büyük olmalı.');
+  assert(er >= 1, 'εr en az 1 olmalı.');
+  return C0 / (wavelength * Math.sqrt(er));
+}
+
+// ---------------------------------------------------------------------------
+// Arşimet spiral anten — kaba bant tahmini (çevre ≈ λ kuralı)
+// ---------------------------------------------------------------------------
+
+/**
+ * Spiralin ışıma yaptığı "aktif bölge" çevresi yaklaşık bir dalga boyudur.
+ * Alt frekans dış yarıçaptan, üst frekans iç yarıçaptan tahmin edilir:
+ *   f = c / (2π·r·√εeff)
+ * Alt tabaka için εeff ≈ (εr + 1)/2 alınır (bir yüzü hava, diğeri kalın dielektrik).
+ * Bu yaklaşık bir tahmindir; besleme, kesme ve kavite etkilerini içermez.
+ */
+export function spiralBand({ rInner, rOuter, er = 1 }) {
+  assert(rInner > 0, 'İç yarıçap sıfırdan büyük olmalı.');
+  assert(rOuter > 0, 'Dış yarıçap sıfırdan büyük olmalı.');
+  assert(rOuter > rInner, 'Dış yarıçap iç yarıçaptan büyük olmalı.');
+  assert(er >= 1, 'εr en az 1 olmalı.');
+  const eeff = (er + 1) / 2;
+  const fLow = C0 / (2 * Math.PI * rOuter * Math.sqrt(eeff));
+  const fHigh = C0 / (2 * Math.PI * rInner * Math.sqrt(eeff));
+  return { fLow, fHigh, eeff, ratio: fHigh / fLow };
+}
+
+// ---------------------------------------------------------------------------
+// Desibel dönüşümleri
+// ---------------------------------------------------------------------------
+
+/** dBm → W */
+export function dbmToWatt(dbm) {
+  assert(Number.isFinite(dbm), 'dBm değeri geçerli bir sayı olmalı.');
+  return 1e-3 * 10 ** (dbm / 10);
+}
+
+/** W → dBm */
+export function wattToDbm(watt) {
+  assert(watt > 0, 'Güç sıfırdan büyük olmalı.');
+  return 10 * Math.log10(watt / 1e-3);
+}
+
+/** dB → güç oranı (10^(dB/10)) */
+export function dbToPowerRatio(db) {
+  assert(Number.isFinite(db), 'dB değeri geçerli bir sayı olmalı.');
+  return 10 ** (db / 10);
+}
+
+/** dB → gerilim/akım oranı (10^(dB/20)) */
+export function dbToVoltageRatio(db) {
+  assert(Number.isFinite(db), 'dB değeri geçerli bir sayı olmalı.');
+  return 10 ** (db / 20);
+}
+
+/** Güç oranı → dB */
+export function powerRatioToDb(ratio) {
+  assert(ratio > 0, 'Oran sıfırdan büyük olmalı.');
+  return 10 * Math.log10(ratio);
+}
+
+/** Gerilim/akım oranı → dB */
+export function voltageRatioToDb(ratio) {
+  assert(ratio > 0, 'Oran sıfırdan büyük olmalı.');
+  return 20 * Math.log10(ratio);
+}
+
+// ---------------------------------------------------------------------------
+// VSWR ↔ |Γ| ↔ geri dönüş kaybı
+// ---------------------------------------------------------------------------
+
+/**
+ * |Γ|'dan tüm uyumsuzluk büyüklükleri.
+ * returnLoss ve mismatchLoss pozitif dB olarak verilir. |Γ| = 0 için RL = ∞.
+ */
+export function mismatchFromGamma(gamma) {
+  assert(gamma >= 0 && gamma < 1, '|Γ| 0 ile 1 arasında olmalı (1 hariç).');
+  return {
+    gamma,
+    vswr: (1 + gamma) / (1 - gamma),
+    returnLoss: gamma === 0 ? Infinity : -20 * Math.log10(gamma),
+    mismatchLoss: -10 * Math.log10(1 - gamma ** 2),
+    reflectedPower: gamma ** 2,
+  };
+}
+
+/** VSWR → |Γ| = (S − 1)/(S + 1) */
+export function mismatchFromVswr(vswr) {
+  assert(vswr >= 1, 'VSWR en az 1 olmalı.');
+  assert(Number.isFinite(vswr), 'VSWR sonlu olmalı.');
+  return mismatchFromGamma((vswr - 1) / (vswr + 1));
+}
+
+/** Geri dönüş kaybı (pozitif dB) → |Γ| = 10^(−RL/20) */
+export function mismatchFromReturnLoss(returnLoss) {
+  assert(returnLoss > 0, 'Geri dönüş kaybı sıfırdan büyük olmalı (pozitif dB).');
+  return mismatchFromGamma(10 ** (-returnLoss / 20));
+}
 
 // ---------------------------------------------------------------------------
 // Mikroşerit hat — Hammerstad & Jensen (1980), "Accurate Models for Microstrip

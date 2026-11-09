@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tarayıcı Test Çalıştırıcısı</title>
+  <!--
+    Node.js kurulu değilken test/ klasöründeki testleri tarayıcıda çalıştırır.
+    Import map, node:test ve node:assert/strict modüllerini küçük uyumlu sarmalayıcılara yönlendirir.
+    Asıl test aracı yine `node --test`; bu sayfa yalnızca yedek.
+  -->
+  <script type="importmap">
+    {
+      "imports": {
+        "node:test": "./shim-test.js",
+        "node:assert/strict": "./shim-assert.js"
+      }
+    }
+  </script>
+  <style>
+    :root { --bg: #ffffff; --text: #1c2027; --ok: #1a7f37; --fail: #b42318; --muted: #5b6472; color-scheme: light; }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg: #14171c; --text: #e4e7ec; --ok: #4ac26b; --fail: #ff8a80; --muted: #9aa3b2; color-scheme: dark; }
+    }
+    body { background: var(--bg); color: var(--text); font: 14px/1.5 ui-monospace, Consolas, monospace; margin: 0; padding: 16px; }
+    .ok { color: var(--ok); }
+    .fail { color: var(--fail); }
+    .suite { font-weight: 700; margin-top: 12px; }
+    .err { color: var(--fail); white-space: pre-wrap; margin-left: 2rem; }
+    #summary { font-size: 1.1rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div id="summary">Çalışıyor…</div>
+  <div id="log"></div>
+  <script type="module">
+    import { run } from './shim-test.js';
+    const files = ['units.test.js', 'rf.test.js', 'circuit.test.js', 'wind.test.js'];
+    const log = document.getElementById('log');
+    const loadErrors = [];
+    for (const file of files) {
+      try {
+        await import(`../../test/${file}`);
+      } catch (err) {
+        // Henüz yazılmamış test dosyaları (404) atlanır.
+        if (!String(err).includes('Failed to fetch')) loadErrors.push(`${file}: ${err}`);
+      }
+    }
+    const results = await run();
+    for (const r of results) {
+      if (r.suite) { log.insertAdjacentHTML('beforeend', `<div class="suite">${r.suite}</div>`); continue; }
+      const line = document.createElement('div');
+      line.className = r.ok ? 'ok' : 'fail';
+      line.textContent = `${r.ok ? '✔' : '✖'} ${r.name}`;
+      log.append(line);
+      if (!r.ok) {
+        const e = document.createElement('div');
+        e.className = 'err';
+        e.textContent = r.error;
+        log.append(e);
+      }
+    }
+    for (const msg of loadErrors) {
+      const e = document.createElement('div');
+      e.className = 'err';
+      e.textContent = msg;
+      log.append(e);
+    }
+    const tests = results.filter((r) => !r.suite);
+    const failed = tests.filter((r) => !r.ok).length + loadErrors.length;
+    const summary = document.getElementById('summary');
+    summary.className = failed ? 'fail' : 'ok';
+    summary.textContent = `${tests.length} test · ${tests.length - tests.filter((r) => !r.ok).length} geçti · ${failed} başarısız`;
+    window.__testResult = { total: tests.length, failed, results, loadErrors };
+  </script>
+</body>
+</html>
