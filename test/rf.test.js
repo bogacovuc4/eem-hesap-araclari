@@ -17,6 +17,10 @@ import {
   mismatchFromVswr,
   mismatchFromGamma,
   mismatchFromReturnLoss,
+  freeSpacePathLoss,
+  linkBudget,
+  linkRange,
+  patchAntenna,
 } from '../src/calc/rf.js';
 
 describe('mikroşerit analiz (Hammerstad-Jensen)', () => {
@@ -185,5 +189,63 @@ describe('VSWR ↔ |Γ| ↔ RL', () => {
     assert.throws(() => mismatchFromVswr(0.9), RangeError);
     assert.throws(() => mismatchFromGamma(1), RangeError);
     assert.throws(() => mismatchFromReturnLoss(-3), RangeError);
+  });
+});
+
+describe('Friis / link bütçesi', () => {
+  it('serbest uzay yol kaybı: 1 km, 2,4 GHz → 100,05 dB; 1 m, 1 GHz → 32,45 dB', () => {
+    assertClose(freeSpacePathLoss({ d: 1000, f: 2.4e9 }), 100.052, 1e-5);
+    assertClose(freeSpacePathLoss({ d: 1, f: 1e9 }), 32.4478, 1e-5);
+  });
+
+  it('mesafe iki katına çıkınca kayıp 6,02 dB artar', () => {
+    const a = freeSpacePathLoss({ d: 500, f: 5.8e9 });
+    const b = freeSpacePathLoss({ d: 1000, f: 5.8e9 });
+    assertClose(b - a, 6.0206, 1e-4);
+  });
+
+  it('Pr = Pt + Gt + Gr − FSPL − L; pay = Pr − duyarlılık', () => {
+    const r = linkBudget({ pt: 20, gt: 6, gr: 3, f: 2.4e9, d: 1000, losses: 2, sensitivity: -90 });
+    assertClose(r.pr, 20 + 6 + 3 - 100.052 - 2, 1e-5);
+    assertClose(r.margin, r.pr + 90, 1e-12);
+    assert.equal(r.eirp, 26);
+  });
+
+  it('menzil hesabı link bütçesiyle tutarlı (gidiş-dönüş)', () => {
+    const { distance } = linkRange({ pt: 20, gt: 6, gr: 3, f: 2.4e9, losses: 2, sensitivity: -90, margin: 10 });
+    const back = linkBudget({ pt: 20, gt: 6, gr: 3, f: 2.4e9, d: distance, losses: 2, sensitivity: -90 });
+    assertClose(back.margin, 10, 1e-9);
+  });
+
+  it('geçersiz girdide RangeError', () => {
+    assert.throws(() => freeSpacePathLoss({ d: 0, f: 1e9 }), RangeError);
+    assert.throws(() => linkBudget({ pt: 0, gt: 0, gr: 0, f: 1e9, d: 1, losses: -1 }), RangeError);
+  });
+});
+
+describe('yama (patch) anten', () => {
+  // Balanis, Antenna Theory, Örnek 14.1–14.3: f = 10 GHz, εr = 2,2, h = 0,1588 cm
+  const p = patchAntenna({ f: 10e9, er: 2.2, h: 0.1588e-2 });
+
+  it('W ≈ 1,186 cm, εeff ≈ 1,972, ΔL ≈ 0,081 cm, L ≈ 0,906 cm', () => {
+    assertClose(p.w, 1.186e-2, 1e-3);
+    assertClose(p.eeff, 1.972, 1e-3);
+    assertClose(p.dl, 0.081e-2, 5e-3);
+    assertClose(p.l, 0.906e-2, 1e-3);
+  });
+
+  it('kenar direnci ≈ 228 Ω (G1 + G12), 50 Ω girintisi y0 ≈ 0,3126 cm', () => {
+    assertClose(p.g1, 0.00157, 0.01);
+    assertClose(p.rEdge, 228.3, 0.005);
+    assertClose(p.inset, 0.3126e-2, 0.005);
+  });
+
+  it('hedef empedans kenar direncinden büyükse girinti yok', () => {
+    assert.equal(patchAntenna({ f: 10e9, er: 2.2, h: 0.1588e-2, z0: 300 }).inset, null);
+  });
+
+  it('geçersiz girdide RangeError', () => {
+    assert.throws(() => patchAntenna({ f: 10e9, er: 1, h: 1e-3 }), RangeError);
+    assert.throws(() => patchAntenna({ f: 0, er: 4.4, h: 1e-3 }), RangeError);
   });
 });

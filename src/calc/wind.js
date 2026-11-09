@@ -1,4 +1,5 @@
 import { assert } from './validate.js';
+import { gamma, simpson } from './math.js';
 
 /** Betz sınırı: ideal bir rotorun çekebileceği en yüksek güç katsayısı, 16/27 ≈ 0,593 */
 export const BETZ_LIMIT = 16 / 27;
@@ -95,4 +96,77 @@ export function windLogLaw({ v1, h1, h2, z0 }) {
   assert(z0 > 0, 'Pürüzlülük uzunluğu z0 sıfırdan büyük olmalı.');
   assert(h1 > z0 && h2 > z0, 'Yükseklikler pürüzlülük uzunluğu z0’dan büyük olmalı.');
   return v1 * Math.log(h2 / z0) / Math.log(h1 / z0);
+}
+
+// ---------------------------------------------------------------------------
+// Weibull dağılımı ve yıllık enerji üretimi (AEP)
+// ---------------------------------------------------------------------------
+
+export const HOURS_PER_YEAR = 8760;
+
+/** Weibull olasılık yoğunluğu f(v) = (k/c)(v/c)^(k−1)·e^(−(v/c)^k) */
+export function weibullPdf(v, k, c) {
+  if (v < 0) return 0;
+  if (v === 0) return k === 1 ? 1 / c : 0;
+  return (k / c) * (v / c) ** (k - 1) * Math.exp(-((v / c) ** k));
+}
+
+/** Weibull birikimli dağılım F(v) = 1 − e^(−(v/c)^k) */
+export function weibullCdf(v, k, c) {
+  return v <= 0 ? 0 : 1 - Math.exp(-((v / c) ** k));
+}
+
+/** Ortalama hızdan ölçek parametresi: c = v̄ / Γ(1 + 1/k) */
+export function weibullScaleFromMean(mean, k) {
+  assert(mean > 0 && k > 0, 'Ortalama hız ve k sıfırdan büyük olmalı.');
+  return mean / gamma(1 + 1 / k);
+}
+
+/**
+ * Basitleştirilmiş güç eğrisi: devreye girme hızının altında 0, nominal hıza kadar
+ * kübik artış P = Pr·(v³ − vci³)/(vr³ − vci³), nominalden durma hızına kadar Pr, üstünde 0.
+ */
+export function powerCurve(v, { rated, cutIn, ratedSpeed, cutOut }) {
+  if (v < cutIn || v >= cutOut) return 0;
+  if (v >= ratedSpeed) return rated;
+  return rated * (v ** 3 - cutIn ** 3) / (ratedSpeed ** 3 - cutIn ** 3);
+}
+
+/**
+ * Yıllık enerji üretimi. rated W, hızlar m/s.
+ * AEP = 8760 · ∫ P(v) f(v) dv (sayısal integral). availability: kullanılabilirlik (0–1).
+ * @returns {{ aep, meanPower, capacityFactor, meanSpeed, powerDensity, hoursAtRated, bins }}
+ */
+export function annualEnergy({ k, c, rated, cutIn, ratedSpeed, cutOut, rho = 1.225, availability = 1, binWidth = 1 }) {
+  assert(k > 0 && c > 0, 'Weibull k ve c sıfırdan büyük olmalı.');
+  assert(rated > 0, 'Nominal güç sıfırdan büyük olmalı.');
+  assert(cutIn >= 0 && cutIn < ratedSpeed && ratedSpeed < cutOut, 'Hızlar devreye girme < nominal < durma sırasında olmalı.');
+  assert(availability > 0 && availability <= 1, 'Kullanılabilirlik 0 ile 1 arasında olmalı.');
+  const curve = { rated, cutIn, ratedSpeed, cutOut };
+
+  // Her parçada Simpson; kırılma noktalarında (cutIn, ratedSpeed, cutOut) parça sınırı.
+  const integrand = (v) => powerCurve(v, curve) * weibullPdf(v, k, c);
+  const meanPowerRaw = simpson(integrand, cutIn, ratedSpeed, 2000)
+    + rated * (weibullCdf(cutOut, k, c) - weibullCdf(ratedSpeed, k, c));
+  const meanPower = meanPowerRaw * availability;
+
+  // Grafik için hız aralıklarına göre yıllık enerji (Wh)
+  const bins = [];
+  for (let v0 = 0; v0 < cutOut; v0 += binWidth) {
+    const v1 = Math.min(v0 + binWidth, cutOut);
+    const energy = simpson(integrand, v0, v1, 200) * HOURS_PER_YEAR * availability;
+    const hours = (weibullCdf(v1, k, c) - weibullCdf(v0, k, c)) * HOURS_PER_YEAR;
+    bins.push({ from: v0, to: v1, energy, hours });
+  }
+
+  return {
+    aep: meanPower * HOURS_PER_YEAR,
+    meanPower,
+    capacityFactor: meanPower / rated,
+    meanSpeed: c * gamma(1 + 1 / k),
+    powerDensity: 0.5 * rho * c ** 3 * gamma(1 + 3 / k),
+    hoursAtRated: (weibullCdf(cutOut, k, c) - weibullCdf(ratedSpeed, k, c)) * HOURS_PER_YEAR,
+    hoursProducing: (weibullCdf(cutOut, k, c) - weibullCdf(cutIn, k, c)) * HOURS_PER_YEAR,
+    bins,
+  };
 }

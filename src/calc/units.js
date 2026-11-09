@@ -128,3 +128,21 @@ export const CURRENT_UNITS = {
   mA: 1e-3,
   A: 1,
 };
+
+export const DISTANCE_UNITS = {
+  m: 1,
+  km: 1e3,
+};
+
+export const TIME_UNITS = {
+  ns: 1e-9,
+  'µs': 1e-6,
+  ms: 1e-3,
+  s: 1,
+};
+
+export const POWER_UNITS = {
+  W: 1,
+  kW: 1e3,
+  MW: 1e6,
+};

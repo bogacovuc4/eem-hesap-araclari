@@ -4,6 +4,7 @@ import { assertClose } from './helpers.js';
 import {
   standardValueAtLeast, voltageDivider, dividerR2, ledResistor,
   rcCutoff, rlCutoff, seriesRlc, nonInvertingGain, invertingGain, gainDb,
+  combineComponents, firstOrderResponse, riseTime, rcTransient, rlTransient,
 } from '../src/calc/circuit.js';
 
 describe('E serisi', () => {
@@ -96,5 +97,58 @@ describe('op-amp', () => {
 
   it('geçersiz girdide RangeError', () => {
     assert.throws(() => invertingGain({ rf: 1, rin: 0 }), RangeError);
+  });
+});
+
+describe('seri / paralel birleştirme', () => {
+  it('seri dirençler toplanır: 100 + 220 + 330 = 650 Ω', () => {
+    assertClose(combineComponents({ kind: 'R', connection: 'series', values: [100, 220, 330] }).total, 650, 1e-12);
+  });
+
+  it('paralel dirençler: 100 ∥ 100 = 50 Ω; 1 k ∥ 2 k ∥ 2 k = 500 Ω', () => {
+    assertClose(combineComponents({ kind: 'R', connection: 'parallel', values: [100, 100] }).total, 50, 1e-12);
+    assertClose(combineComponents({ kind: 'R', connection: 'parallel', values: [1e3, 2e3, 2e3] }).total, 500, 1e-12);
+  });
+
+  it('kondansatörler tersine: paralel toplanır, seri 10 µ + 10 µ = 5 µF', () => {
+    assertClose(combineComponents({ kind: 'C', connection: 'parallel', values: [10e-6, 22e-6] }).total, 32e-6, 1e-12);
+    assertClose(combineComponents({ kind: 'C', connection: 'series', values: [10e-6, 10e-6] }).total, 5e-6, 1e-12);
+  });
+
+  it('bobinler direnç gibi: seri 1 mH + 2 mH = 3 mH', () => {
+    assertClose(combineComponents({ kind: 'L', connection: 'series', values: [1e-3, 2e-3] }).total, 3e-3, 1e-12);
+  });
+
+  it('geçersiz girdide RangeError', () => {
+    assert.throws(() => combineComponents({ kind: 'R', connection: 'series', values: [100, 0] }), RangeError);
+    assert.throws(() => combineComponents({ kind: 'X', connection: 'series', values: [1] }), RangeError);
+  });
+});
+
+describe('birinci derece geçici yanıt', () => {
+  it('t = τ anında son değerin %63,2’sine ulaşılır', () => {
+    assertClose(firstOrderResponse({ initial: 0, final: 1, tau: 1, t: 1 }), 0.632121, 1e-6);
+  });
+
+  it('yükselme süresi (%10→%90) = τ·ln 9 ≈ 2,197τ', () => {
+    assertClose(riseTime(1e-3), 2.19722e-3, 1e-5);
+  });
+
+  it('RC: 1 kΩ, 1 µF, 5 V, t = 1 ms → vC ≈ 3,161 V, i ≈ 1,839 mA', () => {
+    const r = rcTransient({ r: 1e3, c: 1e-6, vs: 5, v0: 0, t: 1e-3 });
+    assertClose(r.tau, 1e-3, 1e-12);
+    assertClose(r.vc, 3.16060, 1e-5);
+    assertClose(r.i, 1.83940e-3, 1e-5);
+  });
+
+  it('RC deşarj: v0 = 10 V, Vs = 0, t = 2τ → 1,353 V', () => {
+    assertClose(rcTransient({ r: 1, c: 1, vs: 0, v0: 10, t: 2 }).vc, 1.35335, 1e-5);
+  });
+
+  it('RL: 10 Ω, 100 mH, 12 V, t = 5τ → %99,3 (1,192 A)', () => {
+    const r = rlTransient({ r: 10, l: 0.1, vs: 12, i0: 0, t: 0.05 });
+    assertClose(r.iFinal, 1.2, 1e-12);
+    assertClose(r.il, 1.19191, 1e-5);
+    assertClose(r.progress, 0.993262, 1e-5);
   });
 });

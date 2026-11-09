@@ -8,9 +8,10 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 
 | Kategori | Hesaplayıcı |
 |---|---|
-| Anten / RF | Dalga boyu ↔ frekans · Mikroşerit hat (analiz + sentez, Hammerstad-Jensen) · Arşimet spiral anten bandı · dB çeviriciler (dBm ↔ W, dB ↔ oran) · VSWR ↔ \|Γ\| ↔ geri dönüş kaybı |
-| Devre | Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
-| Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
+| Anten / RF | Dalga boyu ↔ frekans · Mikroşerit hat (analiz + sentez, Hammerstad-Jensen) · Yama (patch) anten tasarımı (Balanis iletim hattı modeli, G1/G12 ile kenar direnci ve girintili besleme) · Friis / link bütçesi (alınan güç, bağlantı payı, en büyük mesafe) · Arşimet spiral anten bandı · dB çeviriciler (dBm ↔ W, dB ↔ oran) · VSWR ↔ \|Γ\| ↔ geri dönüş kaybı |
+| Devre | Seri / paralel birleştirici (R, L, C) · RC / RL geçici yanıt (grafikli) · Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
+| Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Weibull ile yıllık enerji üretimi ve kapasite faktörü (grafikli) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
+| Sayısal | Sayı tabanı dönüştürücü (2/8/10/16, 64 bite kadar, ikinin tümleyeni, bit ızgarası) |
 | Bileşen kodları | Direnç renk kodu (3–6 bant, iki yönlü) · SMD direnç kodu (3 haneli, 4 haneli, R, EIA-96) · Kondansatör kodu (104K, 4n7, 4R7…) · Bobin kodu (renk ve yazılı, µH/nH) |
 
 Her hesaplayıcı formülü, geçerlilik aralığını ve varsayımları ekranda gösterir. Emin olunamayan yaklaşımlar arayüzde **doğrulanmalı** etiketiyle işaretlidir. Şu an bu etiket spiral anten tahmininde ve rüzgâr profilindeki tipik α / z₀ tablolarında var.
@@ -63,13 +64,15 @@ src/
     constants.js      c0, μ0, ε0, η0
     units.js          Birim tabloları, sayı ayrıştırma, SI ön ekli biçimlendirme
     validate.js       Girdi doğrulama mesajları
-    rf.js · circuit.js · wind.js · codes.js
+    rf.js · circuit.js · wind.js · codes.js · digital.js
+    math.js           Simpson integrali, Bessel J0, Gamma fonksiyonu
   ui/                 Arayüz
     dom.js            Küçük el() DOM oluşturucu
     form.js           calculatorView / calculatorPanel / numberField
     formula.js        KaTeX ile formül (CDN yoksa düz metin)
     theme.js          Tema değiştirme (localStorage, try/catch)
-    rf/ · circuit/ · wind/ · codes/   Her hesaplayıcı için bir görünüm dosyası
+    chart.js          Tek serili SVG çizgi/çubuk grafik (ipucu + tablo görünümü)
+    rf/ · circuit/ · wind/ · codes/ · digital/   Her hesaplayıcı için bir görünüm dosyası
 test/                 node --test dosyaları
 tools/test-runner/    Node olmadan tarayıcıda test çalıştırma
 ```
@@ -174,6 +177,7 @@ Tüm yollar göreli olduğu için alt klasörde yayınlanmak sorun çıkarmaz. K
 ## Kaynaklar
 
 - E. Hammerstad, Ø. Jensen, "Accurate Models for Microstrip Computer-Aided Design," IEEE MTT-S Int. Microwave Symp. Digest, 1980.
+- C. A. Balanis, *Antenna Theory: Analysis and Design*, Böl. 14 (dikdörtgen yama anten, Örnek 14.1–14.3).
 - D. M. Pozar, *Microwave Engineering*, 4. baskı, Wiley (mikroşerit sentez, VSWR/yansıma).
 - U.S. Standard Atmosphere, 1976 (ISA basınç modeli).
 - A. Betz (1920) — rüzgâr türbini güç katsayısı sınırı 16/27.

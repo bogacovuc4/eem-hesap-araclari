@@ -10,10 +10,14 @@ const nextId = (prefix) => `${prefix}-${(counter += 1)}`;
  * Seçim kutusu. options: [{ value, text, color? }]
  * color verilirse kutunun yanında seçili rengin örneği gösterilir.
  */
-export function selectField({ label, options, value, withSwatch = false }) {
+export function selectField({ label, options, value, withSwatch = false, param = null }) {
   const id = nextId('sel');
+  // param verilirse seçim adres çubuğunda tutulur (geçerli bir seçenekse oradan okunur).
+  const fromUrl = param ? getParam(param) : null;
+  const start = options.some((o) => o.value === fromUrl) ? fromUrl : value;
   const select = el('select', { id, class: 'select-wide' },
-    ...options.map((o) => el('option', { value: o.value, selected: o.value === value }, o.text)));
+    ...options.map((o) => el('option', { value: o.value, selected: o.value === start }, o.text)));
+  if (param) select.addEventListener('change', () => setParams({ [param]: select.value === value ? null : select.value }));
   const swatch = withSwatch ? el('span', { class: 'swatch', 'aria-hidden': 'true' }) : null;
 
   function paintSwatch() {

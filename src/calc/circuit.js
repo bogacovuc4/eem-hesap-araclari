@@ -127,3 +127,66 @@ export function invertingGain({ rf, rin }) {
 export function gainDb(gain) {
   return 20 * Math.log10(Math.abs(gain));
 }
+
+// ---------------------------------------------------------------------------
+// Seri / paralel birleştirme
+// ---------------------------------------------------------------------------
+
+/**
+ * Bileşenleri birleştirir. kind: 'R' | 'L' | 'C', connection: 'series' | 'parallel'.
+ * Direnç ve bobin seri bağlıda toplanır; kondansatör paralel bağlıda toplanır.
+ * (Bobinler arasında karşılıklı endüktans olmadığı varsayılır.)
+ */
+export function combineComponents({ kind, connection, values }) {
+  assert(['R', 'L', 'C'].includes(kind), 'Bileşen türü R, L ya da C olmalı.');
+  assert(connection === 'series' || connection === 'parallel', 'Bağlantı seri ya da paralel olmalı.');
+  assert(Array.isArray(values) && values.length >= 1, 'En az bir değer gerekli.');
+  values.forEach((v, i) => assert(v > 0 && Number.isFinite(v), `${i + 1}. değer sıfırdan büyük olmalı.`));
+
+  const additive = (kind === 'C') === (connection === 'parallel');
+  const total = additive
+    ? values.reduce((sum, v) => sum + v, 0)
+    : 1 / values.reduce((sum, v) => sum + 1 / v, 0);
+  return { total, additive };
+}
+
+// ---------------------------------------------------------------------------
+// Birinci derece geçici yanıt (basamak girişi)
+// ---------------------------------------------------------------------------
+
+/**
+ * Genel birinci derece yanıt: x(t) = x∞ + (x0 − x∞)·e^(−t/τ)
+ */
+export function firstOrderResponse({ initial, final, tau, t }) {
+  assert(tau > 0, 'Zaman sabiti sıfırdan büyük olmalı.');
+  assert(t >= 0, 'Zaman negatif olamaz.');
+  return final + (initial - final) * Math.exp(-t / tau);
+}
+
+/** %10 → %90 yükselme süresi: τ·ln 9 ≈ 2,197τ */
+export const riseTime = (tau) => tau * Math.log(9);
+
+/**
+ * RC devresi, t = 0'da Vs basamağı uygulanır. Kondansatör başlangıç gerilimi v0.
+ * vC(t) = Vs + (v0 − Vs)·e^(−t/RC), i(t) = (Vs − vC)/R
+ */
+export function rcTransient({ r, c, vs, v0 = 0, t }) {
+  assert(r > 0 && c > 0, 'R ve C sıfırdan büyük olmalı.');
+  const tau = r * c;
+  const vc = firstOrderResponse({ initial: v0, final: vs, tau, t });
+  const progress = vs === v0 ? 1 : (vc - v0) / (vs - v0);
+  return { tau, vc, i: (vs - vc) / r, vr: vs - vc, progress, riseTime: riseTime(tau), settle5tau: 5 * tau };
+}
+
+/**
+ * RL devresi, t = 0'da Vs basamağı uygulanır. Bobin başlangıç akımı i0.
+ * iL(t) = Vs/R + (i0 − Vs/R)·e^(−tR/L), vL(t) = Vs − R·iL
+ */
+export function rlTransient({ r, l, vs, i0 = 0, t }) {
+  assert(r > 0 && l > 0, 'R ve L sıfırdan büyük olmalı.');
+  const tau = l / r;
+  const iFinal = vs / r;
+  const il = firstOrderResponse({ initial: i0, final: iFinal, tau, t });
+  const progress = iFinal === i0 ? 1 : (il - i0) / (iFinal - i0);
+  return { tau, il, iFinal, vl: vs - r * il, vr: r * il, progress, riseTime: riseTime(tau), settle5tau: 5 * tau };
+}

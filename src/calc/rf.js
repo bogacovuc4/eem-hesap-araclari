@@ -1,5 +1,6 @@
 import { C0, ETA0 } from './constants.js';
 import { assert } from './validate.js';
+import { simpson, besselJ0 } from './math.js';
 
 // ---------------------------------------------------------------------------
 // Dalga boyu ↔ frekans
@@ -196,5 +197,86 @@ export function microstripSynthesis({ z0, h, er }) {
     u,
     eeff: microstripAnalysis({ w: u, h: 1, er }).eeff,
     uEstimate: microstripWidthEstimate({ z0, er }),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Friis iletim denklemi ve link bütçesi
+// ---------------------------------------------------------------------------
+
+/** Serbest uzay yol kaybı (dB): FSPL = 20·log10(4π·d·f / c). d m, f Hz. */
+export function freeSpacePathLoss({ d, f }) {
+  assert(d > 0, 'Mesafe sıfırdan büyük olmalı.');
+  assert(f > 0, 'Frekans sıfırdan büyük olmalı.');
+  return 20 * Math.log10((4 * Math.PI * d * f) / C0);
+}
+
+/**
+ * Alınan güç (dBm): Pr = Pt + Gt + Gr − FSPL − L.
+ * pt dBm, gt/gr dBi, losses dB (kablo, polarizasyon vb. toplam), sensitivity dBm (isteğe bağlı).
+ */
+export function linkBudget({ pt, gt, gr, f, d, losses = 0, sensitivity = null }) {
+  assert(losses >= 0, 'Ek kayıplar negatif olamaz.');
+  const fspl = freeSpacePathLoss({ d, f });
+  const pr = pt + gt + gr - fspl - losses;
+  return {
+    fspl,
+    pr,
+    margin: sensitivity === null ? null : pr - sensitivity,
+    eirp: pt + gt,
+  };
+}
+
+/** Alıcı duyarlılığına göre en büyük mesafe (m): FSPL_max = Pt + Gt + Gr − L − S. */
+export function linkRange({ pt, gt, gr, f, losses = 0, sensitivity, margin = 0 }) {
+  assert(f > 0, 'Frekans sıfırdan büyük olmalı.');
+  assert(losses >= 0 && margin >= 0, 'Kayıp ve pay negatif olamaz.');
+  const maxPathLoss = pt + gt + gr - losses - sensitivity - margin;
+  return {
+    maxPathLoss,
+    distance: (C0 / (4 * Math.PI * f)) * 10 ** (maxPathLoss / 20),
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Dikdörtgen yama (patch) anten — iletim hattı modeli (Balanis, Antenna Theory, Böl. 14)
+// ---------------------------------------------------------------------------
+
+/**
+ * f, εr, h → W, L, εeff, ΔL; kenar giriş direnci (G1, G12 yayılım iletkenlikleri) ve
+ * istenen empedans için girinti (inset) besleme derinliği y0.
+ */
+export function patchAntenna({ f, er, h, z0 = 50 }) {
+  assert(f > 0, 'Frekans sıfırdan büyük olmalı.');
+  assert(er > 1, 'εr 1’den büyük olmalı.');
+  assert(h > 0, 'Alt tabaka kalınlığı sıfırdan büyük olmalı.');
+  assert(z0 > 0, 'Hedef empedans sıfırdan büyük olmalı.');
+
+  const lambda0 = C0 / f;
+  const w = (C0 / (2 * f)) * Math.sqrt(2 / (er + 1));
+  const eeff = (er + 1) / 2 + ((er - 1) / 2) * (1 + (12 * h) / w) ** -0.5;
+  const dl = 0.412 * h * ((eeff + 0.3) * (w / h + 0.264)) / ((eeff - 0.258) * (w / h + 0.8));
+  const l = C0 / (2 * f * Math.sqrt(eeff)) - 2 * dl;
+  assert(l > 0, 'Bu alt tabaka çok kalın: hesaplanan L negatif çıktı.');
+
+  // Yayılım yarıklarının iletkenlikleri (Balanis 14-12a, 14-18a)
+  const k0 = (2 * Math.PI) / lambda0;
+  const core = (t) => {
+    const ct = Math.cos(t);
+    const v = Math.abs(ct) < 1e-12 ? (k0 * w / 2) ** 2 : (Math.sin((k0 * w / 2) * ct) / ct) ** 2;
+    return v * Math.sin(t) ** 3;
+  };
+  const g1 = simpson(core, 0, Math.PI, 2000) / (120 * Math.PI ** 2);
+  const g12 = simpson((t) => core(t) * besselJ0(k0 * l * Math.sin(t)), 0, Math.PI, 1000) / (120 * Math.PI ** 2);
+  const rEdge = 1 / (2 * (g1 + g12));
+  const inset = z0 < rEdge ? (l / Math.PI) * Math.acos(Math.sqrt(z0 / rEdge)) : null;
+
+  return {
+    w, l, eeff, dl, lambda0,
+    lambdaG: lambda0 / Math.sqrt(eeff),
+    g1, g12, rEdge, inset,
+    groundL: l + 6 * h,
+    groundW: w + 6 * h,
+    hOverLambda: h / lambda0,
   };
 }

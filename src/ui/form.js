@@ -109,7 +109,7 @@ export function numberField(spec) {
  *            çizilir. values: girdiler (SI; boş/hatalı alan null/NaN), output: compute
  *            sonucu ya da hata varsa null. compute sonucu `raw` alanında sayısal sonuçlar taşıyabilir.
  */
-export function calculatorPanel({ fields, compute, formulas = [], notes = [], diagram = null }) {
+export function calculatorPanel({ fields, compute, formulas = [], notes = [], diagram = null, diagramTitle = 'Devre şeması' }) {
   const controls = fields.map(numberField);
   const resultList = el('dl', { class: 'results' });
   const messages = el('div', { class: 'messages', 'aria-live': 'polite' });
@@ -161,7 +161,7 @@ export function calculatorPanel({ fields, compute, formulas = [], notes = [], di
 
   const element = el('div', { class: 'panel-grid' },
     diagramBox
-      ? el('section', { class: 'card card-wide' }, el('h2', {}, 'Devre şeması'), diagramBox)
+      ? el('section', { class: 'card card-wide' }, el('h2', {}, diagramTitle), diagramBox)
       : null,
     el('section', { class: 'card' }, el('h2', {}, 'Girdiler'), ...controls.map((c) => c.element)),
     el('section', { class: 'card' }, el('h2', {}, 'Sonuçlar'), resultList, messages),

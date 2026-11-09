@@ -520,3 +520,88 @@ details summary { cursor: pointer; color: var(--accent); margin-bottom: 8px; }
   .copy-link span { display: none; }
   .panel-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* ---------- Grafikler ---------- */
+.chart-figure { margin: 0; flex: 1 1 100%; }
+.chart-title { font-weight: 600; font-size: .9rem; margin-bottom: 4px; }
+.chart { position: relative; }
+.chart-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart-grid { stroke: var(--border); stroke-width: 1; }
+.chart-axis { stroke: var(--text-muted); stroke-width: 1; }
+.chart-tick { fill: var(--text-muted); font-family: var(--mono); font-size: 11px; }
+.chart-label { fill: var(--text-muted); font-family: var(--sans); font-size: 12px; }
+.chart-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.chart-marker { fill: var(--accent); stroke: var(--surface); stroke-width: 2; }
+.chart-dot { fill: var(--surface); stroke: var(--accent); stroke-width: 2; }
+.chart-cross { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-ref { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 2 4; }
+.chart-ref-label { fill: var(--text-muted); font-family: var(--mono); font-size: 11px; }
+.chart-bar { fill: var(--accent); }
+.chart-bar.active { opacity: .75; }
+.chart-hit { fill: transparent; }
+.chart-tip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  padding: 4px 8px;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: .8rem;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+}
+.chart-table { margin-top: 8px; }
+
+/* ---------- Yama anten çizimi ---------- */
+.patch-ground { fill: #9aa4ae; opacity: .35; }
+.patch-metal { fill: #c8873a; stroke: rgba(0, 0, 0, .35); stroke-width: 1; }
+.dim-line { stroke: var(--text-muted); stroke-width: 1; }
+
+/* ---------- Birleştirici ---------- */
+.combine-rows .field-row { align-items: stretch; }
+.btn-secondary {
+  font: inherit;
+  padding: 7px 12px;
+  border: 1px dashed var(--border-input);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--accent);
+}
+.btn-secondary:hover { background: var(--surface-2); }
+.btn-secondary:disabled, .btn-icon:disabled { opacity: .45; cursor: not-allowed; }
+.btn-icon {
+  flex: 0 0 36px;
+  font-size: 1.1rem;
+  border: 1px solid var(--border-input);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text-muted);
+}
+.btn-icon:hover:not(:disabled) { color: var(--error-text); border-color: var(--error-text); }
+
+/* ---------- Bit ızgarası ---------- */
+.bit-box { overflow-x: auto; }
+.bit-grid { display: grid; gap: 8px; justify-content: safe center; }
+.bit-row { display: flex; gap: 2px; }
+.bit {
+  display: grid;
+  justify-items: center;
+  width: 22px;
+  padding: 3px 0 2px;
+  border-radius: 4px;
+  font-family: var(--mono);
+}
+.bit-nibble-end { margin-right: 6px; }
+.bit-nibble-end:last-child { margin-right: 0; }
+.bit-on { background: var(--accent); color: var(--accent-contrast); }
+.bit-off { background: var(--surface-2); color: var(--text-muted); }
+.bit-value { font-weight: 700; font-size: .95rem; }
+.bit-index { font-size: .6rem; opacity: .8; }
+@media (max-width: 760px) {
+  .bit { width: 16px; }
+  .bit-nibble-end { margin-right: 3px; }
+  .bit-index { display: none; }
+}
