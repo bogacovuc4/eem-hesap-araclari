@@ -2,6 +2,7 @@ import { calculatorView, calculatorPanel } from '../form.js';
 import { formula } from '../formula.js';
 import { RESISTANCE_UNITS, VOLTAGE_UNITS, formatSI, formatNumber } from '../../calc/units.js';
 import { voltageDivider, dividerR2, standardValueAtLeast } from '../../calc/circuit.js';
+import { dividerSchematic } from './schematics.js';
 
 const notes = [
   'Yüksüz bölücü: çıkışa bağlanan yükün direnci R2’den çok büyük (≈ 10 kat ve üstü) olmalıdır; aksi hâlde Vout düşer.',
@@ -35,8 +36,10 @@ export default {
                   { label: 'R1 gücü', value: formatSI(d.p1, 'W') },
                   { label: 'R2 gücü', value: formatSI(d.p2, 'W') },
                 ],
+                raw: { vout: d.vout },
               };
             },
+            diagram: (v, out) => dividerSchematic({ ...v, vout: out?.raw.vout }),
             formulas: [formula(String.raw`V_{\text{out}}=V_{\text{in}}\,\frac{R_2}{R_1+R_2},\qquad I=\frac{V_{\text{in}}}{R_1+R_2}`, 'Vout = Vin · R2/(R1 + R2),  I = Vin/(R1 + R2)')],
             notes,
           }),
@@ -59,8 +62,10 @@ export default {
                   { label: 'E24 (bir üst) değer', value: formatSI(e24, 'Ω', 3) },
                   { label: 'E24 ile Vout', value: formatSI(voltageDivider({ vin: v.vin, r1: v.r1, r2: e24 }).vout, 'V') },
                 ],
+                raw: { r2 },
               };
             },
+            diagram: (v, out) => dividerSchematic({ ...v, r2: out?.raw.r2 }),
             formulas: [formula(String.raw`R_2=R_1\,\frac{V_{\text{out}}}{V_{\text{in}}-V_{\text{out}}}`, 'R2 = R1 · Vout/(Vin − Vout)')],
             notes,
           }),

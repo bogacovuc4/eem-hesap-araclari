@@ -2,6 +2,7 @@ import { calculatorView, calculatorPanel } from '../form.js';
 import { formula } from '../formula.js';
 import { VOLTAGE_UNITS, CURRENT_UNITS, formatSI } from '../../calc/units.js';
 import { ledResistor } from '../../calc/circuit.js';
+import { ledSchematic } from './schematics.js';
 
 export default {
   id: 'circuit/led',
@@ -37,8 +38,10 @@ export default {
                 { label: 'LED gücü (E12)', value: formatSI(led.ledPower, 'W') },
               ],
               warnings,
+              raw: { r: led.r },
             };
           },
+          diagram: (v, out) => ledSchematic({ ...v, r: out?.raw.r }),
           formulas: [formula(String.raw`R=\frac{V_s-V_f}{I},\qquad P_R=I^2R`, 'R = (Vs − Vf)/I,  P_R = I²·R')],
           notes: [
             'Vf sabit kabul edilir; gerçekte akım ve sıcaklıkla biraz değişir.',

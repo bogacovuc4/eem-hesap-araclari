@@ -82,11 +82,20 @@ export function numberField(spec) {
  *            Hesap RangeError fırlatırsa mesajı hata olarak gösterilir.
  *   formulas formula() düğümleri
  *   notes    geçerlilik/varsayım notları (string veya düğüm)
+ *   diagram  (values, output) => Node  — isteğe bağlı devre şeması. Her değişiklikte yeniden
+ *            çizilir. values: girdiler (SI; boş/hatalı alan null/NaN), output: compute
+ *            sonucu ya da hata varsa null. compute sonucu `raw` alanında sayısal sonuçlar taşıyabilir.
  */
-export function calculatorPanel({ fields, compute, formulas = [], notes = [] }) {
+export function calculatorPanel({ fields, compute, formulas = [], notes = [], diagram = null }) {
   const controls = fields.map(numberField);
   const resultList = el('dl', { class: 'results' });
   const messages = el('div', { class: 'messages', 'aria-live': 'polite' });
+  const diagramBox = diagram ? el('div', { class: 'schematic' }) : null;
+
+  function drawDiagram(values, output) {
+    if (!diagramBox) return;
+    diagramBox.replaceChildren(...[diagram(values, output)].flat());
+  }
 
   function showMessages(errors, warnings) {
     messages.replaceChildren(
@@ -107,26 +116,33 @@ export function calculatorPanel({ fields, compute, formulas = [], notes = [] }) 
     if (errors.length) {
       resultList.replaceChildren(el('p', { class: 'result-empty' }, 'Sonuç için girdileri düzeltin.'));
       showMessages(errors, []);
+      drawDiagram(values, null);
       return;
     }
 
     try {
-      const { results, warnings = [] } = compute(values);
+      const output = compute(values);
+      const { results, warnings = [] } = output;
       resultList.replaceChildren(
         ...results.map(({ label, value }) =>
           el('div', { class: 'result-row' }, el('dt', {}, label), el('dd', {}, value))),
       );
       showMessages([], warnings);
+      drawDiagram(values, output);
     } catch (err) {
       if (!(err instanceof RangeError)) throw err;
       resultList.replaceChildren(el('p', { class: 'result-empty' }, 'Hesaplanamadı.'));
       showMessages([err.message], []);
+      drawDiagram(values, null);
     }
   }
 
   for (const control of controls) control.onChange(update);
 
   const element = el('div', { class: 'panel-grid' },
+    diagramBox
+      ? el('section', { class: 'card card-wide' }, el('h2', {}, 'Devre şeması'), diagramBox)
+      : null,
     el('section', { class: 'card' }, el('h2', {}, 'Girdiler'), ...controls.map((c) => c.element)),
     el('section', { class: 'card' }, el('h2', {}, 'Sonuçlar'), resultList, messages),
     formulas.length

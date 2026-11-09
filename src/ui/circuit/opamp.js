@@ -2,6 +2,7 @@ import { calculatorView, calculatorPanel } from '../form.js';
 import { formula } from '../formula.js';
 import { RESISTANCE_UNITS, VOLTAGE_UNITS, formatSI, formatNumber } from '../../calc/units.js';
 import { nonInvertingGain, invertingGain, gainDb } from '../../calc/circuit.js';
+import { nonInvertingSchematic, invertingSchematic } from './schematics.js';
 
 const vinField = { key: 'vin', label: 'Giriş gerilimi Vin', name: 'Vin', value: '0.1', units: VOLTAGE_UNITS, unit: 'V', constraint: 'any' };
 
@@ -36,9 +37,14 @@ export default {
               { key: 'rg', label: 'Toprak direnci Rg', name: 'Rg', value: '1', units: RESISTANCE_UNITS, unit: 'kΩ' },
               vinField,
             ],
-            compute: ({ rf, rg, vin }) => ({
-              results: results(nonInvertingGain({ rf, rg }), vin, [{ label: 'Giriş empedansı', value: '≈ ∞ (ideal)' }]),
-            }),
+            compute: ({ rf, rg, vin }) => {
+              const g = nonInvertingGain({ rf, rg });
+              return {
+                results: results(g, vin, [{ label: 'Giriş empedansı', value: '≈ ∞ (ideal)' }]),
+                raw: { vout: g * vin },
+              };
+            },
+            diagram: (v, out) => nonInvertingSchematic({ ...v, vout: out?.raw.vout }),
             formulas: [formula(String.raw`G=1+\frac{R_f}{R_g}`, 'G = 1 + Rf/Rg')],
             notes: ['Rf = 0 (veya Rg → ∞) gerilim izleyici verir: G = 1.', ...notes],
           }),
@@ -52,9 +58,14 @@ export default {
               { key: 'rin', label: 'Giriş direnci Rin', name: 'Rin', value: '1', units: RESISTANCE_UNITS, unit: 'kΩ' },
               vinField,
             ],
-            compute: ({ rf, rin, vin }) => ({
-              results: results(invertingGain({ rf, rin }), vin, [{ label: 'Giriş empedansı', value: formatSI(rin, 'Ω') }]),
-            }),
+            compute: ({ rf, rin, vin }) => {
+              const g = invertingGain({ rf, rin });
+              return {
+                results: results(g, vin, [{ label: 'Giriş empedansı', value: formatSI(rin, 'Ω') }]),
+                raw: { vout: g * vin },
+              };
+            },
+            diagram: (v, out) => invertingSchematic({ ...v, vout: out?.raw.vout }),
             formulas: [formula(String.raw`G=-\frac{R_f}{R_{\text{in}}}`, 'G = −Rf/Rin')],
             notes: ['Eksi işaret 180° faz farkını gösterir. Giriş empedansı Rin’e eşittir.', ...notes],
           }),

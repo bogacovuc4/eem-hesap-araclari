@@ -250,6 +250,36 @@ h3 { font-size: .95rem; }
   color: var(--warn-text);
 }
 
+/* ---------- Devre şemaları ---------- */
+.schematic {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px 32px;
+}
+.schematic-figure { margin: 0; flex: 1 1 260px; max-width: 460px; }
+.schematic-figure figcaption {
+  text-align: center;
+  font-size: .85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.schematic-svg { display: block; width: 100%; height: auto; margin: 0 auto; }
+.sch-line {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.sch-body { fill: var(--surface); }
+.sch-fill { fill: var(--text); }
+.sch-term { fill: var(--surface); stroke: var(--text); stroke-width: 1.6; }
+.sch-text { fill: var(--text); font-family: var(--sans); font-size: 12.5px; }
+.sch-name { font-weight: 600; }
+.sch-value { fill: var(--accent); font-family: var(--mono); font-size: 12px; }
+.sch-unknown { fill: var(--warn-text); font-weight: 700; }
+
 /* ---------- Ana sayfa ---------- */
 .home-grid {
   display: grid;

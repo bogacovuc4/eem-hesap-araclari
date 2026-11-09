@@ -128,6 +128,12 @@ export default {
 };
 ```
 
+**Devre şeması (isteğe bağlı).** `calculatorPanel`'e `diagram: (values, output) => Node` verirseniz panelin üstünde bir "Devre şeması" kartı çıkar ve her girişte yeniden çizilir. `values` girdilerin SI değerleridir; `output`, `compute`'un döndürdüğü nesnedir (hata varsa `null`). Hesaplanan büyüklükleri şemaya taşımak için `compute`'tan `raw: { ... }` döndürün. Çizim yardımcıları `src/ui/schematic.js` içinde: `twoTerminal('resistor' | 'capacitor' | 'inductor' | 'led' | 'source' | 'ac', a, b)`, `wire`, `ground`, `dot`, `terminal`, `opamp`, `label(x, y, ad, değer)`. Değeri olmayan bir etikete `{ unknown: true }` verilirse "?" gösterilir. Mevcut örnekler `src/ui/circuit/schematics.js` dosyasında.
+
+```js
+diagram: (v, out) => dividerSchematic({ ...v, vout: out?.raw.vout }),
+```
+
 Alan seçenekleri: `constraint` (`'positive'` varsayılan, `'nonnegative'`, `'any'`), `min`, `max` (dahil, SI cinsinden), `hint`, `name` (hata mesajlarındaki kısa ad). Birden çok mod (ör. analiz/sentez) için `modes` dizisine yeni öğe ekleyin; sekmeler otomatik oluşur. Doğrulanmamış bir yaklaşım için notlarda `verifyNote('...')` kullanın.
 
 **4. `src/registry.js` içinde içe aktarıp ilgili kategorinin `calculators` listesine ekleyin.** Menü ve ana sayfa kendiliğinden güncellenir.

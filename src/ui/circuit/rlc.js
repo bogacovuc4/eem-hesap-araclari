@@ -2,6 +2,7 @@ import { calculatorView, calculatorPanel } from '../form.js';
 import { formula } from '../formula.js';
 import { RESISTANCE_UNITS, CAPACITANCE_UNITS, INDUCTANCE_UNITS, formatSI, formatNumber } from '../../calc/units.js';
 import { seriesRlc } from '../../calc/circuit.js';
+import { rlcSchematic } from './schematics.js';
 
 export default {
   id: 'circuit/rlc',
@@ -33,8 +34,10 @@ export default {
                 { label: 'Karakteristik empedans √(L/C)', value: formatSI(s.characteristicImpedance, 'Ω') },
               ],
               warnings,
+              raw: { f0: s.f0 },
             };
           },
+          diagram: (v, out) => rlcSchematic({ ...v, f0: out?.raw.f0 }),
           formulas: [formula(String.raw`f_0=\frac{1}{2\pi\sqrt{LC}},\qquad Q=\frac{1}{R}\sqrt{\frac{L}{C}}=\frac{\omega_0L}{R},\qquad \text{BW}=\frac{f_0}{Q},\qquad \zeta=\frac{1}{2Q}`,
             'f0 = 1/(2π·√(LC)),  Q = (1/R)·√(L/C) = ω0·L/R,  BW = f0/Q,  ζ = 1/(2Q)')],
           notes: [
