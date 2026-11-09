@@ -5,6 +5,11 @@ import microstrip from './ui/rf/microstrip.js';
 import spiral from './ui/rf/spiral.js';
 import decibel from './ui/rf/decibel.js';
 import vswr from './ui/rf/vswr.js';
+import divider from './ui/circuit/divider.js';
+import led from './ui/circuit/led.js';
+import filter from './ui/circuit/filter.js';
+import rlc from './ui/circuit/rlc.js';
+import opamp from './ui/circuit/opamp.js';
 
 export const categories = [
   {
@@ -15,7 +20,7 @@ export const categories = [
   {
     id: 'circuit',
     title: 'Devre',
-    calculators: [],
+    calculators: [divider, led, filter, rlc, opamp],
   },
   {
     id: 'wind',

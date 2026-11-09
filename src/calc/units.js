@@ -101,3 +101,30 @@ export function formatSI(value, unit, digits = 4) {
   const prefix = PREFIXES.find(([e]) => e === exp3)[1];
   return `${formatNumber(mantissa, digits)} ${prefix}${unit}`.trim();
 }
+
+export const CAPACITANCE_UNITS = {
+  pF: 1e-12,
+  nF: 1e-9,
+  'µF': 1e-6,
+  mF: 1e-3,
+  F: 1,
+};
+
+export const INDUCTANCE_UNITS = {
+  nH: 1e-9,
+  'µH': 1e-6,
+  mH: 1e-3,
+  H: 1,
+};
+
+export const VOLTAGE_UNITS = {
+  mV: 1e-3,
+  V: 1,
+  kV: 1e3,
+};
+
+export const CURRENT_UNITS = {
+  'µA': 1e-6,
+  mA: 1e-3,
+  A: 1,
+};
