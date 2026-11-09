@@ -33,7 +33,7 @@ function markActive(id) {
 function renderHome() {
   content.replaceChildren(
     el('h1', {}, 'EEM Hesap Araçları'),
-    el('p', {}, 'Derslerde sık kullanılan hesaplar. Soldaki menüden bir hesaplayıcı seçin.'),
+    el('p', {}, 'Derslerde sık kullanılan hesaplar. Menüden bir hesaplayıcı seçin.'),
     el('div', { class: 'home-grid' },
       ...visibleCategories().map((category) =>
         el('section', { class: 'card' },
