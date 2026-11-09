@@ -1,5 +1,7 @@
 # EEM Hesap Araçları
 
+**Canlı site:** https://bogacovuc4.github.io/eem-hesap-araclari/
+
 Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerde toplayan, bağımlılıksız bir web sitesi. Saf HTML + CSS + JavaScript (ES modülleri) ile yazıldı. Build adımı, framework ve `node_modules` yok.
 
 ## Hesaplayıcılar
