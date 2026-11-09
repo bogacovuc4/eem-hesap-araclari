@@ -11,6 +11,7 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 | Anten / RF | Dalga boyu ↔ frekans · Mikroşerit hat (analiz + sentez, Hammerstad-Jensen) · Arşimet spiral anten bandı · dB çeviriciler (dBm ↔ W, dB ↔ oran) · VSWR ↔ \|Γ\| ↔ geri dönüş kaybı |
 | Devre | Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
 | Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
+| Bileşen kodları | Direnç renk kodu (3–6 bant, iki yönlü) · SMD direnç kodu (3 haneli, 4 haneli, R, EIA-96) · Kondansatör kodu (104K, 4n7, 4R7…) · Bobin kodu (renk ve yazılı, µH/nH) |
 
 Her hesaplayıcı formülü, geçerlilik aralığını ve varsayımları ekranda gösterir. Emin olunamayan yaklaşımlar arayüzde **doğrulanmalı** etiketiyle işaretlidir. Şu an bu etiket spiral anten tahmininde ve rüzgâr profilindeki tipik α / z₀ tablolarında var.
 
@@ -52,13 +53,13 @@ src/
     constants.js      c0, μ0, ε0, η0
     units.js          Birim tabloları, sayı ayrıştırma, SI ön ekli biçimlendirme
     validate.js       Girdi doğrulama mesajları
-    rf.js · circuit.js · wind.js
+    rf.js · circuit.js · wind.js · codes.js
   ui/                 Arayüz
     dom.js            Küçük el() DOM oluşturucu
     form.js           calculatorView / calculatorPanel / numberField
     formula.js        KaTeX ile formül (CDN yoksa düz metin)
     theme.js          Tema değiştirme (localStorage, try/catch)
-    rf/ · circuit/ · wind/   Her hesaplayıcı için bir görünüm dosyası
+    rf/ · circuit/ · wind/ · codes/   Her hesaplayıcı için bir görünüm dosyası
 test/                 node --test dosyaları
 tools/test-runner/    Node olmadan tarayıcıda test çalıştırma
 ```

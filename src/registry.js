@@ -13,6 +13,10 @@ import opamp from './ui/circuit/opamp.js';
 import turbine from './ui/wind/turbine.js';
 import density from './ui/wind/density.js';
 import profile from './ui/wind/profile.js';
+import resistorColor from './ui/codes/resistor-color.js';
+import smdResistor from './ui/codes/smd-resistor.js';
+import capacitorCode from './ui/codes/capacitor-code.js';
+import inductorCode from './ui/codes/inductor-code.js';
 
 export const categories = [
   {
@@ -29,6 +33,11 @@ export const categories = [
     id: 'wind',
     title: 'Rüzgâr enerjisi',
     calculators: [turbine, density, profile],
+  },
+  {
+    id: 'codes',
+    title: 'Bileşen kodları',
+    calculators: [resistorColor, smdResistor, capacitorCode, inductorCode],
   },
 ];
 
