@@ -10,6 +10,9 @@ import led from './ui/circuit/led.js';
 import filter from './ui/circuit/filter.js';
 import rlc from './ui/circuit/rlc.js';
 import opamp from './ui/circuit/opamp.js';
+import turbine from './ui/wind/turbine.js';
+import density from './ui/wind/density.js';
+import profile from './ui/wind/profile.js';
 
 export const categories = [
   {
@@ -25,7 +28,7 @@ export const categories = [
   {
     id: 'wind',
     title: 'Rüzgâr enerjisi',
-    calculators: [],
+    calculators: [turbine, density, profile],
   },
 ];
 
