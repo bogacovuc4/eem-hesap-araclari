@@ -7,6 +7,13 @@ import decibel from './ui/rf/decibel.js';
 import vswr from './ui/rf/vswr.js';
 import linkBudget from './ui/rf/link-budget.js';
 import patch from './ui/rf/patch.js';
+import quarterWave from './ui/rf/quarter-wave.js';
+import lineInput from './ui/rf/line-input.js';
+import coax from './ui/rf/coax.js';
+import skinDepth from './ui/rf/skin-depth.js';
+import noise from './ui/rf/noise.js';
+import antennaBasics from './ui/rf/antenna-basics.js';
+import radar from './ui/rf/radar.js';
 import divider from './ui/circuit/divider.js';
 import led from './ui/circuit/led.js';
 import filter from './ui/circuit/filter.js';
@@ -28,7 +35,7 @@ export const categories = [
   {
     id: 'rf',
     title: 'Anten / RF',
-    calculators: [wavelength, microstrip, patch, spiral, linkBudget, decibel, vswr],
+    calculators: [wavelength, microstrip, coax, lineInput, quarterWave, patch, spiral, antennaBasics, linkBudget, radar, noise, skinDepth, decibel, vswr],
   },
   {
     id: 'circuit',
@@ -71,6 +78,13 @@ const META = {
   'codes/smd-resistor': ['472, 1002, 4R7, EIA-96 kodları', 'smd direnc kodu eia96 cip'],
   'codes/capacitor': ['104K, 4n7, 4R7 gibi kodlar', 'kondansator kapasitor kod pf nf seramik'],
   'codes/inductor': ['Renk bantlı ve yazılı (SMD) bobin kodları', 'bobin enduktans kod uh smd'],
+  'rf/quarter-wave': ['Z1 = √(Z0·ZL), uzunluk ve bant genişliği', 'ceyrek dalga donusturucu empedans uyumlama lambda/4 eslestirme'],
+  'rf/line-input': ['Karmaşık yükle hat girişinde Zin, Γ, VSWR', 'giris empedansi hat zin yuk yansima stub kisa devre acik devre'],
+  'rf/coax': ['D, d, εr → Z0, C′, L′; Z0 → D sentezi', 'koaksiyel koaks kablo rg58 empedans'],
+  'rf/skin-depth': ['δ, yüzey direnci ve tel AC/DC direnci', 'deri derinligi skin depth iletkenlik bakir yuzey direnci'],
+  'rf/noise': ['NF ↔ Te, kademeli katlar (Friis), kTB ve duyarlılık', 'gurultu faktoru sicakligi friis kademe lna ktb duyarlilik'],
+  'rf/antenna-basics': ['Kazanç ↔ etkin açıklık, dBd, uzak alan sınırı', 'anten kazanc aciklik dbi dbd uzak alan dipol canak'],
+  'rf/radar': ['Hedeften dönen güç ve en büyük menzil', 'radar menzil denklemi rcs kesit alani'],
   'rf/link-budget': ['Alınan güç, bağlantı payı ve en büyük mesafe', 'friis link butce fspl yol kaybi menzil alinan guc eirp'],
   'rf/patch': ['f, εr, h → W, L ve girintili besleme', 'yama patch mikroserit anten tasarim inset'],
   'circuit/combine': ['R, L, C seri ve paralel toplam değer', 'seri paralel esdeger direnc kondansator bobin toplam'],

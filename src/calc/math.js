@@ -30,3 +30,18 @@ export function gamma(x) {
   for (let i = 1; i < 9; i += 1) a += LANCZOS[i] / (z + i);
   return Math.sqrt(2 * Math.PI) * t ** (z + 0.5) * Math.exp(-t) * a;
 }
+
+// ---------------------------------------------------------------------------
+// Karmaşık sayılar: { re, im }
+// ---------------------------------------------------------------------------
+export const cx = (re, im = 0) => ({ re, im });
+export const cadd = (a, b) => cx(a.re + b.re, a.im + b.im);
+export const csub = (a, b) => cx(a.re - b.re, a.im - b.im);
+export const cmul = (a, b) => cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+export function cdiv(a, b) {
+  const d = b.re ** 2 + b.im ** 2;
+  return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d);
+}
+export const cabs = (a) => Math.hypot(a.re, a.im);
+/** Açı (derece) */
+export const cargDeg = (a) => (Math.atan2(a.im, a.re) * 180) / Math.PI;
