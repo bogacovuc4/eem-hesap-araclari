@@ -74,28 +74,80 @@ const sideSearch = searchBox({
   onEnter: goToFirstMatch,
 });
 
+// Açık kategoriler bu tarayıcıda hatırlanır (localStorage kapalıysa yalnızca oturum boyunca).
+const NAV_KEY = 'eem-nav-open';
+function readOpenGroups() {
+  try {
+    const list = JSON.parse(localStorage.getItem(NAV_KEY) ?? 'null');
+    return Array.isArray(list) ? new Set(list) : new Set();
+  } catch {
+    return new Set();
+  }
+}
+function saveOpenGroups() {
+  try {
+    localStorage.setItem(NAV_KEY, JSON.stringify([...openGroups]));
+  } catch {
+    // kaydedilemezse durum yalnızca bu sayfa açıkken korunur
+  }
+}
+const openGroups = readOpenGroups();
+let searching = false;
+
+function setGroupOpen(group, open) {
+  group.querySelector('.nav-group-head').setAttribute('aria-expanded', String(open));
+  group.querySelector('.nav-items').hidden = !open;
+}
+
 function buildNav() {
   navGroups.replaceChildren(
-    ...categories.filter((c) => c.calculators.length > 0).map((category) =>
-      el('div', { class: 'nav-group' },
-        el('div', { class: 'nav-group-title' }, category.title),
-        ...category.calculators.map((calc) =>
-          el('a', { class: 'nav-link', href: `#/${calc.id}`, 'data-id': calc.id }, calc.title)),
-      )),
+    ...categories.filter((c) => c.calculators.length > 0).map((category) => {
+      const itemsId = `nav-items-${category.id}`;
+      const total = category.calculators.length;
+      const chevron = icon('chevron', { size: 16 });
+      chevron.setAttribute('class', 'icon nav-chevron');
+      const head = el('button', {
+        type: 'button', class: 'nav-group-head', 'aria-expanded': 'false', 'aria-controls': itemsId,
+      },
+      icon(category.icon, { size: 18 }),
+      el('span', { class: 'nav-group-name' }, category.title),
+      el('span', { class: 'nav-count', 'data-total': total, title: `${total} hesaplayıcı` }, String(total)),
+      chevron);
+      const group = el('div', { class: 'nav-group', 'data-cat': category.id },
+        head,
+        el('div', { class: 'nav-items', id: itemsId },
+          ...category.calculators.map((calc) =>
+            el('a', { class: 'nav-link', href: `#/${calc.id}`, 'data-id': calc.id }, calc.title))));
+      head.addEventListener('click', () => {
+        if (searching) return; // arama sırasında gruplar sonuçlara göre açılır
+        const open = !openGroups.has(category.id);
+        if (open) openGroups.add(category.id);
+        else openGroups.delete(category.id);
+        saveOpenGroups();
+        setGroupOpen(group, open);
+      });
+      setGroupOpen(group, openGroups.has(category.id));
+      return group;
+    }),
   );
   sidebar.replaceChildren(el('div', { class: 'side-search' }, sideSearch.wrap), navGroups, navEmpty);
 }
 
 function filterNav(query) {
+  searching = Boolean(query.trim());
   let shown = 0;
   for (const group of navGroups.querySelectorAll('.nav-group')) {
     let groupShown = 0;
     for (const link of group.querySelectorAll('.nav-link')) {
-      const ok = !query.trim() || matches(findCalculator(link.dataset.id), query);
+      const ok = !searching || matches(findCalculator(link.dataset.id), query);
       link.hidden = !ok;
       if (ok) groupShown += 1;
     }
+    const count = group.querySelector('.nav-count');
+    count.textContent = searching ? String(groupShown) : count.dataset.total;
     group.hidden = groupShown === 0;
+    // Aramada eşleşen gruplar açılır; arama bitince kullanıcının seçimi geri gelir
+    setGroupOpen(group, searching ? groupShown > 0 : openGroups.has(group.dataset.cat));
     shown += groupShown;
   }
   navEmpty.replaceChildren(...(shown === 0 ? [noResults(query)] : []));
@@ -103,8 +155,18 @@ function filterNav(query) {
 
 function markActive(id) {
   for (const link of sidebar.querySelectorAll('.nav-link')) {
-    if (link.dataset.id === id) link.setAttribute('aria-current', 'page');
-    else link.removeAttribute('aria-current');
+    if (link.dataset.id === id) {
+      link.setAttribute('aria-current', 'page');
+      // Açık sayfanın kategorisi her zaman görünsün
+      const group = link.closest('.nav-group');
+      if (!searching && !openGroups.has(group.dataset.cat)) {
+        openGroups.add(group.dataset.cat);
+        saveOpenGroups();
+        setGroupOpen(group, true);
+      }
+    } else {
+      link.removeAttribute('aria-current');
+    }
   }
 }
 
@@ -126,7 +188,7 @@ function renderHome() {
       const list = category.calculators.filter((c) => !query.trim() || matches(c, query));
       if (!list.length) return null;
       return el('section', { class: 'card home-card' },
-        el('h2', {}, category.title),
+        el('h2', {}, icon(category.icon, { size: 16 }), category.title),
         el('div', { class: 'calc-links' }, ...list.map(calcCard)));
     }).filter(Boolean);
     grid.replaceChildren(...sections);
@@ -144,7 +206,7 @@ function renderHome() {
   const recent = readRecent();
   content.replaceChildren(...[
     el('header', { class: 'home-header' },
-      el('h1', {}, 'EEM Hesap Araçları'),
+      el('h1', {}, el('span', {}, 'EEM Hesap Araçları')),
       el('p', {}, `${allCalculators().length} hesaplayıcı: anten/RF, devre, rüzgâr enerjisi ve bileşen kodları. Değerler yazdıkça hesaplanır, bağlantı girdiğiniz değerleri saklar.`)),
     homeSearch.wrap,
     recent.length

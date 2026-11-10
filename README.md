@@ -26,7 +26,9 @@ Her hesaplayıcı formülü, geçerlilik aralığını ve varsayımları ekranda
 
 Arayüz iyileştirmeleri [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill'inin UX kurallarıyla yapılan bir denetime dayanır.
 
-**Tema:** krem zemin, kahverengi metin ve vurgular, az miktarda parlak kırmızı (etkin menü öğesi, kart başlığı çubuğu, odak halkası, grafikte işaretli nokta). Koyu temada espresso zemin, krem metin ve karamel vurgu. Renkler `styles.css` başındaki token'larda; iki temada da metin kontrastı ≥ 4,5:1, kenar ve vurgu ≥ 3:1 olarak ölçülmüştür.
+**Tema — teknik defter:** kâğıt beyazı zemin (içerikte hafif nokta ızgarası), lacivert mürekkep metin ve vurgular, kırmızı kalemle yalnızca küçük vurgular (etkin menü öğesi, asıl sonuç, odak halkası, grafikte işaretli nokta). Koyu temada "gece defteri": koyu lacivert zemin, açık mürekkep, kırmızı vurgu. Renkler `styles.css` başındaki token'larda; iki temada da metin kontrastı ≥ 4,5:1, kenar ve vurgu ≥ 3:1 olarak ölçülmüştür.
+
+**Menü:** kategoriler ikonlu ve sayaçlı başlıklar altında açılıp kapanır; hangi kategorilerin açık olduğu tarayıcıda hatırlanır, açık sayfanın kategorisi kendiliğinden açılır. Aramada yalnızca eşleşen kategoriler açılır ve sayaçlar eşleşme sayısını gösterir.
 
 ## Çalıştırma
 

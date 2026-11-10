@@ -42,26 +42,31 @@ import numberBase from './ui/digital/number-base.js';
 export const categories = [
   {
     id: 'rf',
+    icon: 'antenna',
     title: 'Anten / RF',
     calculators: [wavelength, microstrip, coax, lineInput, quarterWave, patch, spiral, antennaBasics, linkBudget, radar, noise, skinDepth, decibel, vswr],
   },
   {
     id: 'circuit',
+    icon: 'chip',
     title: 'Devre',
     calculators: [combine, divider, wyeDelta, thevenin, wheatstone, impedanceCalc, filter, transient, rlc, parallelRlc, acPower, opamp, timer555, led, cable],
   },
   {
     id: 'wind',
+    icon: 'wind',
     title: 'Rüzgâr enerjisi',
     calculators: [turbine, aep, density, profile],
   },
   {
     id: 'codes',
+    icon: 'tag',
     title: 'Bileşen kodları',
     calculators: [resistorColor, smdResistor, capacitorCode, inductorCode],
   },
   {
     id: 'digital',
+    icon: 'binary',
     title: 'Sayısal',
     calculators: [numberBase],
   },
