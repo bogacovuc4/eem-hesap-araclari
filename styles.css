@@ -847,3 +847,227 @@ a:hover { color: var(--red); }
   .kmap-wrap { grid-template-columns: minmax(0, 1fr); }
   .kmap-cell { width: 44px; height: 40px; }
 }
+
+/* =====================================================================
+   "Buzlu cam" teması — en son katman, öncekileri ezer.
+   Arkada hareketli sahne (renk bulutları + devre izleri + akım darbeleri),
+   önde yarı saydam, bulanıklaştırılmış cam paneller.
+   ===================================================================== */
+:root {
+  --bg: #e9ecfb;
+  --surface: rgba(255, 255, 255, .72);       /* form alanları, küçük yüzeyler */
+  --surface-2: rgba(255, 255, 255, .5);
+  --surface-solid: #ffffff;                  /* ipucu kutuları: saydam olmamalı */
+  --glass: rgba(255, 255, 255, .58);         /* kartlar, çubuklar */
+  --glass-strong: rgba(255, 255, 255, .8);
+  --glass-edge: rgba(255, 255, 255, .85);    /* camın parlak kenarı */
+  --border: rgba(60, 64, 120, .16);
+  --border-input: #7a7fa3;
+  --text: #13173a;
+  --text-muted: #474d72;
+  --brand: #13173a;
+  --accent: #4a2fd6;                         /* elektrik moru */
+  --accent-2: #0a6fb0;                       /* camgöbeği */
+  --accent-contrast: #ffffff;
+  --red: #c4006a;                            /* sıcak pembe vurgu */
+  --focus: #c4006a;
+  --shadow: 0 8px 32px rgba(40, 40, 110, .12), inset 0 1px 0 var(--glass-edge);
+  --radius: 14px;
+  --blob-1: #8b7bff;
+  --blob-2: #3fd0ff;
+  --blob-3: #ff7ac8;
+  --trace: rgba(74, 47, 214, .22);
+  --blob-opacity: .75;
+  --pulse: #6a4dff;
+  --pulse-alt: #00a6e0;
+  --veil: rgba(233, 236, 251, .2);
+  --heading: "Space Grotesk", var(--sans);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #060819;
+    --surface: rgba(20, 24, 54, .7);
+    --surface-2: rgba(28, 33, 72, .5);
+    --surface-solid: #141836;
+    --glass: rgba(16, 20, 48, .55);
+    --glass-strong: rgba(16, 20, 48, .82);
+    --glass-edge: rgba(160, 170, 255, .14);
+    --border: rgba(150, 160, 255, .16);
+    --border-input: #6f78a8;
+    --text: #eef0ff;
+    --text-muted: #aab2d8;
+    --brand: #eef0ff;
+    --accent: #7fd8ff;
+    --accent-2: #b59cff;
+    --accent-contrast: #061024;
+    --red: #ff5fd2;
+    --focus: #ff7ddc;
+    --shadow: 0 8px 32px rgba(0, 0, 0, .35), inset 0 1px 0 var(--glass-edge);
+    --blob-1: #3b1fd6;
+    --blob-2: #0077b6;
+    --blob-3: #b0168a;
+    --trace: rgba(127, 216, 255, .13);
+    --blob-opacity: .55;
+    --pulse: #7fd8ff;
+    --pulse-alt: #ff5fd2;
+    --veil: rgba(6, 8, 25, .3);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #060819;
+  --surface: rgba(20, 24, 54, .7);
+  --surface-2: rgba(28, 33, 72, .5);
+  --surface-solid: #141836;
+  --glass: rgba(16, 20, 48, .55);
+  --glass-strong: rgba(16, 20, 48, .82);
+  --glass-edge: rgba(160, 170, 255, .14);
+  --border: rgba(150, 160, 255, .16);
+  --border-input: #6f78a8;
+  --text: #eef0ff;
+  --text-muted: #aab2d8;
+  --brand: #eef0ff;
+  --accent: #7fd8ff;
+  --accent-2: #b59cff;
+  --accent-contrast: #061024;
+  --red: #ff5fd2;
+  --focus: #ff7ddc;
+  --shadow: 0 8px 32px rgba(0, 0, 0, .35), inset 0 1px 0 var(--glass-edge);
+  --blob-1: #3b1fd6;
+  --blob-2: #0077b6;
+  --blob-3: #b0168a;
+  --trace: rgba(127, 216, 255, .13);
+  --blob-opacity: .55;
+  --pulse: #7fd8ff;
+  --pulse-alt: #ff5fd2;
+  --veil: rgba(6, 8, 25, .3);
+}
+
+/* ---------- Arka plan sahnesi ---------- */
+body { background: var(--bg); }
+.bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: var(--bg); }
+.bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .55; }
+.bg-blob {
+  position: absolute;
+  width: 55vmax;
+  height: 55vmax;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: var(--blob-opacity);
+  will-change: transform;
+}
+.bg-blob.b1 { background: radial-gradient(circle, var(--blob-1), transparent 65%); top: -20vmax; left: -10vmax; animation: blob-a 26s ease-in-out infinite alternate; }
+.bg-blob.b2 { background: radial-gradient(circle, var(--blob-2), transparent 65%); bottom: -25vmax; right: -12vmax; animation: blob-b 32s ease-in-out infinite alternate; }
+.bg-blob.b3 { background: radial-gradient(circle, var(--blob-3), transparent 65%); top: 30%; left: 35%; width: 40vmax; height: 40vmax; opacity: .35; animation: blob-c 38s ease-in-out infinite alternate; }
+@keyframes blob-a { to { transform: translate(18vw, 14vh) scale(1.15); } }
+@keyframes blob-b { to { transform: translate(-20vw, -16vh) scale(1.1); } }
+@keyframes blob-c { to { transform: translate(-22vw, 18vh) scale(.85); } }
+
+.bg-circuit { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bg-traces path { fill: none; stroke: var(--trace); stroke-width: 2; stroke-linejoin: round; }
+.bg-pads circle { fill: none; stroke: var(--trace); stroke-width: 2; }
+.bg-pulse {
+  fill: none;
+  stroke: var(--pulse);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 46 954;
+  stroke-dashoffset: 1000;
+  opacity: .8;
+  animation-name: pulse-run;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+.bg-pulse.alt { stroke: var(--pulse-alt); }
+@keyframes pulse-run { to { stroke-dashoffset: 0; } }
+.bg-veil { position: absolute; inset: 0; background: var(--veil); }
+
+/* İçerik sahnenin üstünde */
+.layout { position: relative; z-index: 1; }
+.content { background-image: none; }
+
+/* ---------- Cam yüzeyler ---------- */
+.topbar, .sidebar, .card, .home-card, .tabs, .search-large {
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  backdrop-filter: blur(18px) saturate(160%);
+}
+.topbar { position: sticky; z-index: 10; border-bottom: 1px solid var(--border); box-shadow: inset 0 -1px 0 var(--glass-edge); }
+.sidebar { border-right: 1px solid var(--border); }
+.card, .home-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.card > h2 { border-bottom-color: var(--border); }
+
+/* Cam desteklenmiyorsa yüzeyler daha opak olsun (okunurluk) */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .topbar, .sidebar, .card, .home-card, .tabs, .search-large { background: var(--glass-strong); }
+}
+
+/* Başlıklar ve marka */
+h1, .brand-name { font-family: var(--heading); }
+h1 {
+  background: linear-gradient(90deg, var(--brand), var(--accent) 75%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.home-header h1 span { box-shadow: none; -webkit-text-fill-color: var(--red); }
+.brand-mark rect { fill: var(--glass-strong); stroke: var(--accent); }
+.brand-mark polyline { stroke: var(--red); }
+
+/* Kenar çubuğu */
+.nav-group-head { border-radius: 10px; }
+.nav-group-head:hover, .nav-link:hover { background: var(--surface-2); }
+.nav-group-head .icon { color: var(--accent); }
+.nav-count { background: var(--surface); border-color: var(--border); }
+.nav-items { border-left: 1px solid var(--border); }
+.nav-link { border-radius: 8px; border-left: 0; }
+.nav-link[aria-current="page"] {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+  box-shadow: inset 3px 0 0 var(--red);
+}
+
+/* Sekmeler: hap biçimi */
+.tabs { border: 1px solid var(--border); border-radius: 999px; padding: 3px; gap: 2px; }
+.tab { border-radius: 999px; }
+.tab + .tab { border-left: 0; }
+.tab:hover { background: var(--surface-2); }
+.tab[aria-selected="true"] {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--accent-contrast);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent);
+}
+
+/* Form alanları ve düğmeler */
+.field input, .field select, .search-input { background: var(--surface); border-radius: 10px; }
+.icon-btn, .copy-link, .chip { background: var(--surface); border-color: var(--border); border-radius: 10px; }
+.icon-btn:hover, .copy-link:hover, .chip:hover { background: var(--surface-solid); border-color: var(--accent); color: var(--accent); }
+.search-large { border-radius: 14px; }
+.chip { border-radius: 999px; }
+
+/* Sonuçlar: asıl sonuç vurgulu */
+.result-row { border-bottom: 1px solid var(--border); }
+.results > .result-row:first-child dd { color: var(--red); }
+
+/* İpucu kutuları saydam olmasın */
+.chart-tip { background: var(--surface-solid); }
+
+/* Ana sayfa kartları hafifçe yükselsin */
+.home-card { transition: transform .2s ease, box-shadow .2s ease; }
+.home-card:hover { transform: translateY(-2px); box-shadow: 0 14px 40px color-mix(in srgb, var(--accent) 22%, transparent), inset 0 1px 0 var(--glass-edge); }
+.calc-link-title { color: var(--accent); }
+.calc-link:hover .calc-link-title { color: var(--red); }
+
+/* Mobil: menü açılınca daha opak cam */
+@media (max-width: 760px) {
+  .sidebar.open { background: var(--glass-strong); }
+  .bg-blob { filter: blur(50px); }
+}
+
+/* Azaltılmış hareket: darbeler gizlenir (genel kural animasyonları zaten kapatır) */
+@media (prefers-reduced-motion: reduce) {
+  .bg-pulse { display: none; }
+}

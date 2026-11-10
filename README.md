@@ -164,6 +164,20 @@ Alan seçenekleri: `constraint` (`'positive'` varsayılan, `'nonnegative'`, `'an
 
 **4. `src/registry.js` içinde içe aktarıp ilgili kategorinin `calculators` listesine ekleyin.** Menü ve ana sayfa kendiliğinden güncellenir.
 
+## Görünüm ve arka plan
+
+Arayüz "buzlu cam" temasındadır: kartlar ve çubuklar yarı saydam ve bulanıktır, arkada hareketli bir sahne vardır. Sahnede renk bulutları, devre kartı izleri ve izler üzerinde akan akım darbeleri bulunur; tamamı CSS ve SVG ile çizilir (`src/ui/background.js`, `styles.css` sonundaki "Buzlu cam" bölümü). Azaltılmış hareket tercihinde animasyonlar durur.
+
+Arka plana döngü video (ör. Higgsfield ile üretilmiş) eklemek için:
+
+1. Videoyu sessiz, kısa (4–10 sn) ve küçük (1–3 MB) olarak `assets/bg.mp4` adıyla, ilk karesini `assets/bg.jpg` olarak koyun.
+2. `src/ui/background.js` içinde `BG_VIDEO` satırını şöyle değiştirin:
+   ```js
+   export const BG_VIDEO = { src: 'assets/bg.mp4', poster: 'assets/bg.jpg' };
+   ```
+
+Video, azaltılmış hareket ya da veri tasarrufu açıksa yüklenmez.
+
 ## GitHub Pages'e yükleme
 
 Site statik olduğu için olduğu gibi yayınlanabilir:

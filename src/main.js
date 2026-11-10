@@ -1,5 +1,6 @@
 import { categories, findCalculator, matches, allCalculators } from './registry.js';
 import { initTheme } from './ui/theme.js';
+import { mountBackground } from './ui/background.js';
 import { el } from './ui/dom.js';
 import { icon } from './ui/icons.js';
 import { currentRoute } from './ui/urlstate.js';
@@ -207,7 +208,7 @@ function renderHome() {
   content.replaceChildren(...[
     el('header', { class: 'home-header' },
       el('h1', {}, el('span', {}, 'EEM Hesap Araçları')),
-      el('p', {}, `${allCalculators().length} hesaplayıcı: anten/RF, devre, rüzgâr enerjisi ve bileşen kodları. Değerler yazdıkça hesaplanır, bağlantı girdiğiniz değerleri saklar.`)),
+      el('p', {}, `${categories.length} alanda ${allCalculators().length} hesaplayıcı: RF'den güç sistemlerine, sinyallerden sayısal tasarıma. Değerler yazdıkça hesaplanır, bağlantı girdiğiniz değerleri saklar.`)),
     homeSearch.wrap,
     recent.length
       ? el('section', { class: 'recent' },
@@ -276,6 +277,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 initTheme(document.getElementById('theme-toggle'));
+mountBackground();
 buildNav();
 window.addEventListener('hashchange', route);
 route();
