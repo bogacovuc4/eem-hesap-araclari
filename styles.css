@@ -1,65 +1,72 @@
 /* ---------- Tema token'ları ---------- */
 :root {
-  /* Açık tema: UI/UX Pro Max "Minimalism & Swiss" önerisine dayalı lacivert/mavi palet */
-  --bg: #f8fafc;
-  --surface: #ffffff;
-  --surface-2: #f1f3f5;
-  --border: #e2e8f0;          /* kart ve ayraçlar (dekoratif) */
-  --border-input: #7b8698;    /* form kontrolleri: arka plana karşı ≥3:1 */
-  --text: #0f172a;
-  --text-muted: #475569;
-  --brand: #1e3a5f;
-  --accent: #2563eb;
-  --accent-contrast: #ffffff;
-  --focus: #2563eb;
-  --error-bg: #fdecec;
-  --error-text: #9b1c1c;
-  --warn-bg: #fff6e0;
-  --warn-text: #7a5300;
+  /* Açık tema: krem zemin, kahverengi metin ve vurgular, az miktarda parlak kırmızı */
+  --bg: #f6efe2;               /* krem */
+  --surface: #fffaf2;          /* açık krem kart yüzeyi */
+  --surface-2: #f0e5d3;
+  --border: #e3d4bd;           /* kart ve ayraçlar (dekoratif) */
+  --border-input: #9a7f63;     /* form kontrolleri: arka plana karşı >= 3:1 */
+  --text: #2a1b12;             /* koyu kahve */
+  --text-muted: #6a5444;
+  --brand: #5b3620;            /* kahverengi */
+  --accent: #8a4a22;           /* bağlantı, seçili sekme, grafikler */
+  --accent-contrast: #fffaf2;
+  --red: #d62839;              /* az miktarda parlak kırmızı vurgu */
+  --focus: #d62839;
+  --error-bg: #fbe3e1;
+  --error-text: #9e1b24;
+  --warn-bg: #fbefd0;
+  --warn-text: #74500a;
+  --shadow: 0 1px 2px rgba(74, 45, 24, .07), 0 4px 14px rgba(74, 45, 24, .05);
   --mono: ui-monospace, "Cascadia Mono", Consolas, "Liberation Mono", monospace;
   --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --radius: 6px;
-  --sidebar-w: 240px;
+  --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+  --radius: 8px;
+  --sidebar-w: 248px;
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #14171c;
-    --surface: #1b1f26;
-    --surface-2: #232831;
-    --border: #333a45;
-    --border-input: #6b7585;
-    --text: #e4e7ec;
-    --text-muted: #9aa3b2;
-    --brand: #e4e7ec;
-    --accent: #6ea8ff;
-    --accent-contrast: #0d1117;
-    --focus: #8ab8ff;
-    --error-bg: #3a1c1c;
-    --error-text: #ffb4b4;
-    --warn-bg: #3a2f12;
-    --warn-text: #ffd98a;
+    --bg: #1a120d;               /* espresso */
+    --surface: #241912;
+    --surface-2: #2f2219;
+    --border: #463428;
+    --border-input: #85705d;
+    --text: #f4ead9;             /* krem */
+    --text-muted: #c9b49c;
+    --brand: #f4ead9;
+    --accent: #e3a56d;           /* karamel */
+    --accent-contrast: #1a120d;
+    --red: #ff5a5f;
+    --focus: #ff6b6f;
+    --error-bg: #3c1716;
+    --error-text: #ffb3ad;
+    --warn-bg: #3a2a10;
+    --warn-text: #f6d38a;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .35);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
-  --bg: #14171c;
-  --surface: #1b1f26;
-  --surface-2: #232831;
-  --border: #333a45;
-  --border-input: #6b7585;
-  --text: #e4e7ec;
-  --text-muted: #9aa3b2;
-  --brand: #e4e7ec;
-  --accent: #6ea8ff;
-  --accent-contrast: #0d1117;
-  --focus: #8ab8ff;
-  --error-bg: #3a1c1c;
-  --error-text: #ffb4b4;
-  --warn-bg: #3a2f12;
-  --warn-text: #ffd98a;
+  --bg: #1a120d;               /* espresso */
+  --surface: #241912;
+  --surface-2: #2f2219;
+  --border: #463428;
+  --border-input: #85705d;
+  --text: #f4ead9;             /* krem */
+  --text-muted: #c9b49c;
+  --brand: #f4ead9;
+  --accent: #e3a56d;           /* karamel */
+  --accent-contrast: #1a120d;
+  --red: #ff5a5f;
+  --focus: #ff6b6f;
+  --error-bg: #3c1716;
+  --error-text: #ffb3ad;
+  --warn-bg: #3a2a10;
+  --warn-text: #f6d38a;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .35);
   color-scheme: dark;
 }
 
@@ -621,3 +628,136 @@ details summary { cursor: pointer; color: var(--accent); margin-bottom: 8px; }
 .tri-after { stroke-dasharray: 6 4; }
 .tri-qc { stroke: var(--text-muted); stroke-dasharray: 2 3; }
 .wave-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+
+/* =====================================================================
+   Krem / kahverengi / kırmızı tema — bileşen görünümü
+   (önceki kuralların üzerine yazar; renkler yalnızca token'lardan gelir)
+   ===================================================================== */
+
+/* Tipografi: başlıklarda sıcak bir serif, gövdede sistem sans */
+h1, .home-card h2, .card > h2, .brand-name { font-family: var(--serif); letter-spacing: -.005em; }
+h1 { font-size: 1.65rem; color: var(--brand); font-weight: 700; }
+a { text-underline-offset: 2px; }
+a:hover { color: var(--red); }
+::selection { background: color-mix(in srgb, var(--red) 22%, transparent); }
+
+/* Üst çubuk: krem yüzey, altında ince kırmızı çizgi */
+.topbar {
+  height: 56px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  box-shadow: inset 0 -2px 0 var(--red);
+}
+.layout { min-height: calc(100vh - 56px); }
+.brand { display: inline-flex; align-items: center; gap: 10px; }
+.brand-mark { flex: 0 0 auto; display: block; }
+.brand-name { font-size: 1.12rem; font-weight: 700; color: var(--brand); }
+.brand:hover .brand-name { color: var(--brand); }
+.icon-btn {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--brand);
+  border-radius: 999px;
+}
+.icon-btn:hover { background: var(--surface-2); color: var(--red); }
+
+/* Kenar çubuğu */
+.sidebar { background: var(--surface); }
+.nav-group-title { color: var(--accent); letter-spacing: .08em; }
+.nav-link { border-left-width: 3px; border-radius: 0 6px 6px 0; margin-right: 10px; }
+.nav-link:hover { background: var(--surface-2); color: var(--brand); }
+.nav-link[aria-current="page"] {
+  border-left-color: var(--red);
+  background: var(--surface-2);
+  color: var(--brand);
+}
+
+/* Kartlar: yuvarlak köşe, yumuşak gölge, başlıkta küçük kırmızı çubuk */
+.card {
+  border-radius: 12px;
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+  padding: 18px;
+}
+.card > h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.08rem;
+  color: var(--brand);
+  margin-bottom: 12px;
+}
+.card > h2::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 4px;
+  height: 1em;
+  border-radius: 2px;
+  background: var(--red);
+}
+
+/* Sekmeler: hap biçimli segment kontrol */
+.tabs {
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.tab {
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 600;
+  padding: 6px 16px;
+}
+.tab + .tab { border-left: 0; }
+.tab:hover { color: var(--brand); }
+.tab[aria-selected="true"] {
+  background: var(--accent);
+  color: var(--accent-contrast);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .12);
+}
+
+/* Form alanları */
+.field label { color: var(--brand); }
+.field input, .field select, .search-input { background: var(--bg); border-radius: 8px; }
+.field input:focus-visible, .field select:focus-visible, .search-input:focus-visible {
+  border-color: var(--focus);
+  outline: 2px solid color-mix(in srgb, var(--focus) 35%, transparent);
+  outline-offset: 0;
+}
+
+/* Sonuçlar: değerler kahverengi, satır ayracı noktalı */
+.result-row { border-bottom-style: dotted; }
+.result-row dd { color: var(--brand); }
+
+/* Düğmeler */
+.copy-link { border-radius: 999px; border-color: var(--border); background: var(--surface); }
+.copy-link:hover { border-color: var(--red); color: var(--red); background: var(--surface); }
+.btn-secondary { border-radius: 999px; }
+
+/* Ana sayfa */
+.home-header { padding: 8px 0 4px; }
+.home-header h1 { font-size: 2.1rem; margin-bottom: .35rem; }
+.home-header h1::after {
+  content: "";
+  display: block;
+  width: 56px;
+  height: 3px;
+  margin-top: 10px;
+  border-radius: 2px;
+  background: var(--red);
+}
+.search-large { background: var(--surface); box-shadow: var(--shadow); border-radius: 999px; padding-left: 40px; }
+.search-wrap:has(.search-large) > .icon { left: 15px; }
+.home-card h2 { font-size: 1.15rem; }
+.calc-link-title { color: var(--accent); }
+.calc-link:hover .calc-link-title { color: var(--red); }
+.chip { background: var(--surface); border-color: var(--border); }
+.chip:hover { border-color: var(--red); color: var(--red); }
+
+/* Grafik ve çizimlerde vurgulanan nokta kırmızı */
+.chart-marker { fill: var(--red); }
+.notes li::marker { color: var(--red); }
+.tag-verify { border: 1px solid color-mix(in srgb, var(--warn-text) 30%, transparent); }

@@ -24,7 +24,9 @@ Her hesaplayıcı formülü, geçerlilik aralığını ve varsayımları ekranda
 - **Son kullanılanlar:** Ana sayfada en son açtığınız hesaplayıcılar listelenir (yalnızca bu tarayıcıda saklanır).
 - **Erişilebilirlik:** Hatalı girdi mesajı ilgili alanın hemen altında çıkar ve alana bağlıdır (`aria-describedby`). Klavye odağı her kontrolde görünür, sekmeler ok tuşlarıyla değişir. Renk kontrastı açık ve koyu temada WCAG AA eşiklerini sağlar. Azaltılmış hareket tercihinde geçişler kapanır.
 
-Arayüz iyileştirmeleri [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill'inin "Minimalism & Swiss" stil önerisi ve UX kurallarıyla yapılan bir denetime dayanır.
+Arayüz iyileştirmeleri [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) skill'inin UX kurallarıyla yapılan bir denetime dayanır.
+
+**Tema:** krem zemin, kahverengi metin ve vurgular, az miktarda parlak kırmızı (etkin menü öğesi, kart başlığı çubuğu, odak halkası, grafikte işaretli nokta). Koyu temada espresso zemin, krem metin ve karamel vurgu. Renkler `styles.css` başındaki token'larda; iki temada da metin kontrastı ≥ 4,5:1, kenar ve vurgu ≥ 3:1 olarak ölçülmüştür.
 
 ## Çalıştırma
 
