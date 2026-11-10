@@ -9,7 +9,7 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 | Kategori | Hesaplayıcı |
 |---|---|
 | Anten / RF | Dalga boyu ↔ frekans · Mikroşerit hat (analiz + sentez, Hammerstad-Jensen) · Koaksiyel hat (analiz + sentez) · Hat giriş empedansı (karmaşık yük) · Çeyrek dalga dönüştürücü (bant genişliğiyle) · Anten temel büyüklükleri (Ae, dBd, uzak alan) · Radar menzil denklemi · Gürültü (NF ↔ Te, Friis kademe, kTB ve duyarlılık) · Deri derinliği (tel AC/DC direnci) · Yama (patch) anten tasarımı (Balanis iletim hattı modeli, G1/G12 ile kenar direnci ve girintili besleme) · Friis / link bütçesi (alınan güç, bağlantı payı, en büyük mesafe) · Arşimet spiral anten bandı · dB çeviriciler (dBm ↔ W, dB ↔ oran) · VSWR ↔ \|Γ\| ↔ geri dönüş kaybı |
-| Devre | Seri / paralel birleştirici (R, L, C) · RC / RL geçici yanıt (grafikli) · Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
+| Devre | Seri / paralel birleştirici (R, L, C) · Yıldız ↔ üçgen dönüşümü · Thevenin ↔ Norton · Wheatstone köprüsü · Empedans (|Z|, faz, güçler) · Paralel RLC · AC güç ve güç faktörü düzeltme (tek/üç faz) · 555 zamanlayıcı · İletken kesiti (gerilim düşümüne göre) · RC / RL geçici yanıt (grafikli) · Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
 | Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Weibull ile yıllık enerji üretimi ve kapasite faktörü (grafikli) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
 | Sayısal | Sayı tabanı dönüştürücü (2/8/10/16, 64 bite kadar, ikinin tümleyeni, bit ızgarası) |
 | Bileşen kodları | Direnç renk kodu (3–6 bant, iki yönlü) · SMD direnç kodu (3 haneli, 4 haneli, R, EIA-96) · Kondansatör kodu (104K, 4n7, 4R7…) · Bobin kodu (renk ve yazılı, µH/nH) |
@@ -64,7 +64,7 @@ src/
     constants.js      c0, μ0, ε0, η0
     units.js          Birim tabloları, sayı ayrıştırma, SI ön ekli biçimlendirme
     validate.js       Girdi doğrulama mesajları
-    rf.js · rf2.js · circuit.js · wind.js · codes.js · digital.js
+    rf.js · rf2.js · circuit.js · circuit2.js · wind.js · codes.js · digital.js
     math.js           Simpson integrali, Bessel J0, Gamma fonksiyonu, karmaşık sayılar
   ui/                 Arayüz
     dom.js            Küçük el() DOM oluşturucu

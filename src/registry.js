@@ -21,6 +21,14 @@ import rlc from './ui/circuit/rlc.js';
 import opamp from './ui/circuit/opamp.js';
 import combine from './ui/circuit/combine.js';
 import transient from './ui/circuit/transient.js';
+import parallelRlc from './ui/circuit/parallel-rlc.js';
+import impedanceCalc from './ui/circuit/impedance.js';
+import acPower from './ui/circuit/ac-power.js';
+import timer555 from './ui/circuit/timer555.js';
+import wheatstone from './ui/circuit/wheatstone.js';
+import thevenin from './ui/circuit/thevenin.js';
+import wyeDelta from './ui/circuit/wye-delta.js';
+import cable from './ui/circuit/cable.js';
 import turbine from './ui/wind/turbine.js';
 import density from './ui/wind/density.js';
 import profile from './ui/wind/profile.js';
@@ -40,7 +48,7 @@ export const categories = [
   {
     id: 'circuit',
     title: 'Devre',
-    calculators: [combine, divider, led, filter, transient, rlc, opamp],
+    calculators: [combine, divider, wyeDelta, thevenin, wheatstone, impedanceCalc, filter, transient, rlc, parallelRlc, acPower, opamp, timer555, led, cable],
   },
   {
     id: 'wind',
@@ -85,6 +93,14 @@ const META = {
   'rf/noise': ['NF ↔ Te, kademeli katlar (Friis), kTB ve duyarlılık', 'gurultu faktoru sicakligi friis kademe lna ktb duyarlilik'],
   'rf/antenna-basics': ['Kazanç ↔ etkin açıklık, dBd, uzak alan sınırı', 'anten kazanc aciklik dbi dbd uzak alan dipol canak'],
   'rf/radar': ['Hedeften dönen güç ve en büyük menzil', 'radar menzil denklemi rcs kesit alani'],
+  'circuit/parallel-rlc': ['Paralel (tank) devrede f0, Q ve bant genişliği', 'paralel rlc rezonans tank q faktor'],
+  'circuit/impedance': ['Seri/paralel R, L, C empedansı, faz, akım ve güç', 'empedans reaktans faz acisi xl xc admitans'],
+  'circuit/ac-power': ['Güç üçgeni ve güç faktörü düzeltme kondansatörü', 'ac guc faktoru kompanzasyon cos phi reaktif aktif gorunur kondansator'],
+  'circuit/timer555': ['Astable frekans/görev oranı, monostable darbe süresi', '555 zamanlayici timer astable monostable osilator'],
+  'circuit/wheatstone': ['Dengede Rx ya da dengesiz köprüde Vout', 'wheatstone kopru denge gerinim olcer'],
+  'circuit/thevenin': ['Thevenin ↔ Norton, yük gücü, en büyük güç aktarımı', 'thevenin norton esdeger maksimum guc aktarimi'],
+  'circuit/wye-delta': ['Yıldız ve üçgen direnç ağları arası dönüşüm', 'yildiz ucgen y delta donusum star'],
+  'circuit/cable': ['Gerilim düşümüne göre kablo kesiti (DC, 1 faz, 3 faz)', 'iletken kesit kablo gerilim dusumu mm2 bakir aluminyum'],
   'rf/link-budget': ['Alınan güç, bağlantı payı ve en büyük mesafe', 'friis link butce fspl yol kaybi menzil alinan guc eirp'],
   'rf/patch': ['f, εr, h → W, L ve girintili besleme', 'yama patch mikroserit anten tasarim inset'],
   'circuit/combine': ['R, L, C seri ve paralel toplam değer', 'seri paralel esdeger direnc kondansator bobin toplam'],

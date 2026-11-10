@@ -612,3 +612,12 @@ details summary { cursor: pointer; color: var(--accent); margin-bottom: 8px; }
 .coax-center { fill: #c8873a; stroke: rgba(0, 0, 0, .35); }
 :root[data-theme="dark"] .coax-dielectric { fill: #3a3f48; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .coax-dielectric { fill: #3a3f48; } }
+
+/* ---------- Güç üçgeni ve dalga şekli ---------- */
+.tri-p, .tri-q, .tri-s, .tri-qc { fill: none; stroke-width: 2; stroke-linecap: round; }
+.tri-p { stroke: var(--text); }
+.tri-q { stroke: var(--text-muted); }
+.tri-s { stroke: var(--accent); }
+.tri-after { stroke-dasharray: 6 4; }
+.tri-qc { stroke: var(--text-muted); stroke-dasharray: 2 3; }
+.wave-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
