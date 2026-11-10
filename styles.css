@@ -1071,3 +1071,27 @@ h1 {
 @media (prefers-reduced-motion: reduce) {
   .bg-pulse { display: none; }
 }
+
+/* ---------- Arka plan videosu ---------- */
+/* Açık temada video soluk; koyu temada daha belirgin. Perde videonun üstünde okunurluğu korur. */
+.bg-video { opacity: .28; filter: saturate(1.2); }
+.bg-scene:has(.bg-video) .bg-veil { background: color-mix(in srgb, var(--bg) 45%, transparent); }
+.bg-scene:has(.bg-video) .bg-circuit { opacity: .6; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .bg-video { opacity: .6; }
+  :root:not([data-theme="light"]) .bg-scene:has(.bg-video) .bg-veil { background: color-mix(in srgb, var(--bg) 35%, transparent); }
+}
+:root[data-theme="dark"] .bg-video { opacity: .6; }
+:root[data-theme="dark"] .bg-scene:has(.bg-video) .bg-veil { background: color-mix(in srgb, var(--bg) 35%, transparent); }
+
+/* Kart dışındaki başlık ve açıklamalar: arkalarında ince bir cam şerit */
+.home-header, .calc-header {
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--glass);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  backdrop-filter: blur(14px) saturate(150%);
+}
+.home-header p, .calc-header p { color: var(--text-muted); margin-bottom: 0; }

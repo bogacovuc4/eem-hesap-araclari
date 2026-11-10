@@ -6,7 +6,11 @@
 // Azaltılmış hareket ya da veri tasarrufu açıksa video yüklenmez.
 import { s } from './schematic.js';
 
-export const BG_VIDEO = null; // ör. { src: 'assets/bg.mp4', poster: 'assets/bg.jpg' }
+// Higgsfield ile üretildi (Seedance), ileri-geri oynatılarak kesintisiz döngü yapıldı.
+export const BG_VIDEO = {
+  sources: [['assets/bg.webm', 'video/webm'], ['assets/bg.mp4', 'video/mp4']],
+  poster: 'assets/bg.jpg',
+};
 
 const W = 1600;
 const H = 900;
@@ -78,6 +82,8 @@ function wantsVideo() {
   try {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
     if (navigator.connection?.saveData) return false;
+    // Telefonlarda mobil veri harcamasın: küçük ekranda yalnızca CSS sahnesi.
+    if (window.matchMedia('(max-width: 760px)').matches) return false;
   } catch { /* eski tarayıcı */ }
   return true;
 }
@@ -91,9 +97,16 @@ export function mountBackground() {
     const video = document.createElement('video');
     Object.assign(video, { muted: true, loop: true, autoplay: true, playsInline: true, preload: 'auto' });
     video.className = 'bg-video';
-    video.src = BG_VIDEO.src;
+    const sources = BG_VIDEO.sources ?? [[BG_VIDEO.src, '']];
+    for (const [src, type] of sources) {
+      const source = document.createElement('source');
+      source.src = src;
+      if (type) source.type = type;
+      video.append(source);
+    }
     if (BG_VIDEO.poster) video.poster = BG_VIDEO.poster;
-    video.addEventListener('error', () => video.remove());
+    // Hiçbir kaynak oynatılamazsa video kaldırılır, CSS sahnesi kalır.
+    video.lastElementChild.addEventListener('error', () => video.remove());
     scene.append(video);
   }
   for (const name of ['b1', 'b2', 'b3']) {
