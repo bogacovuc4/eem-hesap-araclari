@@ -8,6 +8,14 @@ import { currentRoute } from './ui/urlstate.js';
 const sidebar = document.getElementById('sidebar');
 const content = document.getElementById('content');
 const menuToggle = document.getElementById('menu-toggle');
+let redrawHome = null; // ana sayfa açıkken ızgarayı yeniden çizer
+
+function refreshAfterFavorite() {
+  buildNav();
+  filterNav(sideSearch.input.value);
+  markActive(currentRoute().path);
+  redrawHome?.();
+}
 
 // ---------------------------------------------------------------------------
 // Son kullanılanlar (yalnızca bu tarayıcıda; localStorage kapalıysa sessizce atlanır)
@@ -31,6 +39,66 @@ function pushRecent(id) {
   } catch {
     // localStorage kullanılamıyorsa liste tutulmaz.
   }
+}
+
+// ---------------------------------------------------------------------------
+// Favori dersler (kategoriler). Favoriler hem menüde hem ana sayfada en üstte, favoriye
+// eklenme sırasıyla gösterilir. Yalnızca bu tarayıcıda saklanır.
+// ---------------------------------------------------------------------------
+const FAV_KEY = 'eem-fav-cats';
+
+function readFavorites() {
+  try {
+    const list = JSON.parse(localStorage.getItem(FAV_KEY) ?? '[]');
+    return Array.isArray(list) ? list.filter((id) => categories.some((c) => c.id === id)) : [];
+  } catch {
+    return [];
+  }
+}
+let favorites = readFavorites();
+
+function isFavorite(id) {
+  return favorites.includes(id);
+}
+
+function toggleFavorite(id) {
+  favorites = isFavorite(id) ? favorites.filter((x) => x !== id) : [...favorites, id];
+  try {
+    localStorage.setItem(FAV_KEY, JSON.stringify(favorites));
+  } catch {
+    // kaydedilemezse favoriler yalnızca bu sayfa açıkken geçerli
+  }
+  refreshAfterFavorite();
+}
+
+/** Favoriler önce (eklenme sırasıyla), sonra diğer dersler (özgün sırayla). */
+function orderedCategories() {
+  const withCalcs = categories.filter((c) => c.calculators.length > 0);
+  return {
+    fav: favorites.map((id) => withCalcs.find((c) => c.id === id)).filter(Boolean),
+    rest: withCalcs.filter((c) => !isFavorite(c.id)),
+  };
+}
+
+function starButton(category, size = 16) {
+  const on = isFavorite(category.id);
+  const btn = el('button', {
+    type: 'button',
+    class: on ? 'fav-btn is-fav' : 'fav-btn',
+    'aria-pressed': String(on),
+    'aria-label': on ? `${category.title} favorilerden çıkar` : `${category.title} favorilere ekle`,
+    title: on ? 'Favorilerden çıkar' : 'Favorilere ekle',
+  }, icon('star', { size }));
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const scope = btn.closest('.sidebar') ? '.sidebar' : '.content';
+    toggleFavorite(category.id);
+    // Odak yeniden çizilen düğmeye geri gelsin (klavye kullanıcıları için)
+    document.querySelector(`${scope} .fav-btn[data-cat="${category.id}"]`)?.focus();
+  });
+  btn.dataset.cat = category.id;
+  return btn;
 }
 
 // ---------------------------------------------------------------------------
@@ -100,9 +168,8 @@ function setGroupOpen(group, open) {
   group.querySelector('.nav-items').hidden = !open;
 }
 
-function buildNav() {
-  navGroups.replaceChildren(
-    ...categories.filter((c) => c.calculators.length > 0).map((category) => {
+function navGroup(category) {
+  {
       const itemsId = `nav-items-${category.id}`;
       const total = category.calculators.length;
       const chevron = icon('chevron', { size: 16 });
@@ -114,8 +181,8 @@ function buildNav() {
       el('span', { class: 'nav-group-name' }, category.title),
       el('span', { class: 'nav-count', 'data-total': total, title: `${total} hesaplayıcı` }, String(total)),
       chevron);
-      const group = el('div', { class: 'nav-group', 'data-cat': category.id },
-        head,
+      const group = el('div', { class: isFavorite(category.id) ? 'nav-group is-fav' : 'nav-group', 'data-cat': category.id },
+        el('div', { class: 'nav-group-row' }, head, starButton(category)),
         el('div', { class: 'nav-items', id: itemsId },
           ...category.calculators.map((calc) =>
             el('a', { class: 'nav-link', href: `#/${calc.id}`, 'data-id': calc.id }, calc.title))));
@@ -129,9 +196,19 @@ function buildNav() {
       });
       setGroupOpen(group, openGroups.has(category.id));
       return group;
-    }),
+  }
+}
+
+function buildNav() {
+  const { fav, rest } = orderedCategories();
+  const section = (...children) => el('div', { class: 'nav-section' }, ...children);
+  navGroups.replaceChildren(
+    ...(fav.length ? [section(icon('star', { size: 14 }), 'Favoriler'), ...fav.map(navGroup), section('Tüm dersler')] : []),
+    ...rest.map(navGroup),
   );
-  sidebar.replaceChildren(el('div', { class: 'side-search' }, sideSearch.wrap), navGroups, navEmpty);
+  if (!sidebar.contains(navGroups)) {
+    sidebar.replaceChildren(el('div', { class: 'side-search' }, sideSearch.wrap), navGroups, navEmpty);
+  }
 }
 
 function filterNav(query) {
@@ -151,6 +228,7 @@ function filterNav(query) {
     setGroupOpen(group, searching ? groupShown > 0 : openGroups.has(group.dataset.cat));
     shown += groupShown;
   }
+  for (const label of navGroups.querySelectorAll('.nav-section')) label.hidden = searching;
   navEmpty.replaceChildren(...(shown === 0 ? [noResults(query)] : []));
 }
 
@@ -184,17 +262,38 @@ function renderHome() {
   const grid = el('div', { class: 'home-grid' });
   const empty = el('div', { 'aria-live': 'polite' });
 
-  function drawGrid(query = '') {
-    const sections = categories.map((category) => {
-      const list = category.calculators.filter((c) => !query.trim() || matches(c, query));
-      if (!list.length) return null;
-      return el('section', { class: 'card home-card' },
-        el('h2', {}, icon(category.icon, { size: 16 }), category.title),
-        el('div', { class: 'calc-links' }, ...list.map(calcCard)));
-    }).filter(Boolean);
-    grid.replaceChildren(...sections);
-    empty.replaceChildren(...(sections.length ? [] : [noResults(query)]));
+  const favWrap = el('div', {});
+  let lastQuery = '';
+
+  function card(category, query) {
+    const list = category.calculators.filter((c) => !query.trim() || matches(c, query));
+    if (!list.length) return null;
+    return el('section', { class: isFavorite(category.id) ? 'card home-card is-fav' : 'card home-card' },
+      el('h2', {}, icon(category.icon, { size: 16 }), el('span', { class: 'home-card-title' }, category.title), starButton(category, 18)),
+      el('div', { class: 'calc-links' }, ...list.map(calcCard)));
   }
+
+  function drawGrid(query = '') {
+    lastQuery = query;
+    const { fav, rest } = orderedCategories();
+    const favCards = fav.map((c) => card(c, query)).filter(Boolean);
+    const restCards = rest.map((c) => card(c, query)).filter(Boolean);
+    if (favCards.length) {
+      favWrap.replaceChildren(
+        el('h2', { class: 'home-section-title' }, icon('star', { size: 16 }), 'Favori derslerim'),
+        el('div', { class: 'home-grid home-grid-fav' }, ...favCards),
+        el('h2', { class: 'home-section-title' }, 'Tüm dersler'),
+      );
+    } else if (!favorites.length && !query.trim()) {
+      favWrap.replaceChildren(el('p', { class: 'fav-hint' }, icon('star', { size: 14 }),
+        'İpucu: bir dersin başlığındaki yıldıza basarak onu favorilere ekleyin; favoriler en üstte görünür.'));
+    } else {
+      favWrap.replaceChildren();
+    }
+    grid.replaceChildren(...restCards);
+    empty.replaceChildren(...(favCards.length + restCards.length ? [] : [noResults(query)]));
+  }
+  redrawHome = () => drawGrid(lastQuery);
 
   const homeSearch = searchBox({
     id: 'home-search',
@@ -215,6 +314,7 @@ function renderHome() {
         el('h2', { class: 'recent-title' }, icon('clock', { size: 16 }), 'Son kullanılanlar'),
         el('div', { class: 'chips' }, ...recent.map((c) => el('a', { class: 'chip', href: `#/${c.id}` }, c.title))))
       : null,
+    favWrap,
     grid,
     empty,
   ].filter(Boolean));
@@ -232,9 +332,12 @@ function route() {
   const calc = path ? findCalculator(path) : null;
   markActive(calc ? calc.id : null);
 
+  if (calc) homeBtn.removeAttribute('aria-current');
+  else homeBtn.setAttribute('aria-current', 'page');
   if (!calc) {
     renderHome();
   } else {
+    redrawHome = null;
     content.replaceChildren();
     calc.render(content);
     document.title = `${calc.title} · EEM Hesap Araçları`;
@@ -255,6 +358,14 @@ function closeMenu() {
 }
 
 menuToggle.replaceChildren(icon('menu', { size: 20 }));
+
+// Ana menü düğmesi: masaüstünde simge + yazı, mobilde yalnızca simge
+const homeBtn = document.getElementById('home-btn');
+homeBtn.replaceChildren(icon('home', { size: 18 }), el('span', { class: 'home-btn-label' }, 'Ana menü'));
+homeBtn.addEventListener('click', () => {
+  // Zaten ana sayfadaysa en üste kaydır
+  if (!currentRoute().path) window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 menuToggle.addEventListener('click', () => {
   const open = sidebar.classList.toggle('open');
   menuToggle.setAttribute('aria-expanded', String(open));

@@ -1107,3 +1107,85 @@ h1 {
 .cm-bad { background: color-mix(in srgb, var(--red) 14%, transparent); }
 .chart-data-dot { fill: var(--red); stroke: var(--surface-solid); stroke-width: 1.5; }
 @media (max-width: 760px) { .cm-cell { width: 84px; height: 64px; } }
+
+
+/* ---------- Ana menü düğmesi ---------- */
+.home-btn {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .92rem;
+  margin-right: 8px;
+}
+.home-btn[aria-current="page"] { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
+@media (max-width: 760px) {
+  .home-btn { width: 44px; padding: 0; justify-content: center; margin-right: 6px; }
+  .home-btn-label { display: none; }
+}
+
+/* ---------- Favori dersler ---------- */
+.fav-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.fav-btn:hover { background: var(--surface-2); color: var(--red); }
+.fav-btn.is-fav { color: var(--star); }
+.fav-btn.is-fav .icon { fill: currentColor; }
+.fav-btn:active .icon { transform: scale(.85); }
+
+.nav-group-row { display: flex; align-items: center; gap: 2px; }
+.nav-group-row .nav-group-head { flex: 1; min-width: 0; }
+.nav-group-row .fav-btn { opacity: .55; }
+.nav-group-row:hover .fav-btn, .nav-group-row .fav-btn:focus-visible, .nav-group-row .fav-btn.is-fav { opacity: 1; }
+.nav-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 16px 4px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.nav-section .icon { color: var(--star); fill: currentColor; }
+.nav-section[hidden] { display: none; }
+
+.home-card h2 .home-card-title { flex: 1; }
+.home-card h2 .fav-btn { margin: -6px -6px -6px 0; }
+.home-card.is-fav { border-color: color-mix(in srgb, var(--star) 55%, var(--border)); }
+.home-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 0;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.home-section-title .icon { color: var(--star); fill: currentColor; }
+.home-grid-fav { margin-top: 12px; }
+.home-section-title + .home-grid { margin-top: 12px; }
+.fav-wrap-end + .home-grid { margin-top: 12px; }
+.fav-hint { display: flex; align-items: center; gap: 6px; margin: 18px 0 0; font-size: .85rem; color: var(--text-muted); }
+.fav-hint .icon { color: var(--star); }
+@media (max-width: 760px) { .fav-btn { width: 40px; height: 40px; } }
+:root { --star: #b87400; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --star: #ffc233; } }
+:root[data-theme="dark"] { --star: #ffc233; }
+.home-card h2 .fav-btn .icon { color: inherit; }

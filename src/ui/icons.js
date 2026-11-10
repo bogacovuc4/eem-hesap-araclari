@@ -43,6 +43,8 @@ const PATHS = {
   ],
   sine: [['path', { d: 'M2 12c2.5-7 4.5-7 7 0s4.5 7 7 0 3.5-5 6-5' }]],
   target: [['circle', { cx: 12, cy: 12, r: 9 }], ['circle', { cx: 12, cy: 12, r: 5 }], ['circle', { cx: 12, cy: 12, r: 1 }]],
+  home: [['path', { d: 'M3 10.5 12 3l9 7.5' }], ['path', { d: 'M5 9.5V21h5v-6h4v6h5V9.5' }]],
+  star: [['polygon', { points: '12 2.5 14.9 8.6 21.5 9.4 16.6 14 17.9 20.6 12 17.3 6.1 20.6 7.4 14 2.5 9.4 9.1 8.6' }]],
   network: [
     ['circle', { cx: 5, cy: 6, r: 2 }], ['circle', { cx: 5, cy: 18, r: 2 }], ['circle', { cx: 12, cy: 12, r: 2 }],
     ['circle', { cx: 19, cy: 6, r: 2 }], ['circle', { cx: 19, cy: 18, r: 2 }],

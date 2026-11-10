@@ -166,6 +166,11 @@ Alan seçenekleri: `constraint` (`'positive'` varsayılan, `'nonnegative'`, `'an
 
 **4. `src/registry.js` içinde içe aktarıp ilgili kategorinin `calculators` listesine ekleyin.** Menü ve ana sayfa kendiliğinden güncellenir.
 
+## Gezinme ve favoriler
+
+- Üst çubuktaki **Ana menü** düğmesi her sayfadan ana sayfaya döndürür (telefonda yalnızca ev simgesi).
+- Bir dersin (kategorinin) başlığındaki **yıldıza** basınca ders favorilere eklenir; favoriler hem kenar menüsünde hem ana sayfada en üstte, eklenme sırasıyla görünür. Favoriler yalnızca o tarayıcıda (localStorage) saklanır.
+
 ## Görünüm ve arka plan
 
 Arayüz "buzlu cam" temasındadır: kartlar ve çubuklar yarı saydam ve bulanıktır, arkada hareketli bir sahne vardır. Sahnede renk bulutları, devre kartı izleri ve izler üzerinde akan akım darbeleri bulunur; tamamı CSS ve SVG ile çizilir (`src/ui/background.js`, `styles.css` sonundaki "Buzlu cam" bölümü). Azaltılmış hareket tercihinde animasyonlar durur.
