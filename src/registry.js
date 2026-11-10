@@ -38,6 +38,14 @@ import smdResistor from './ui/codes/smd-resistor.js';
 import capacitorCode from './ui/codes/capacitor-code.js';
 import inductorCode from './ui/codes/inductor-code.js';
 import numberBase from './ui/digital/number-base.js';
+import karnaugh from './ui/digital/karnaugh.js';
+import bjtBias from './ui/electronics/bjt-bias.js';
+import fourier from './ui/signals/fourier.js';
+import bode from './ui/signals/bode.js';
+import secondOrder from './ui/control/second-order.js';
+import transformer from './ui/machines/transformer.js';
+import threePhase from './ui/machines/three-phase.js';
+import modulation from './ui/comm/modulation.js';
 
 export const categories = [
   {
@@ -51,6 +59,36 @@ export const categories = [
     icon: 'chip',
     title: 'Devre',
     calculators: [combine, divider, wyeDelta, thevenin, wheatstone, impedanceCalc, filter, transient, rlc, parallelRlc, acPower, opamp, timer555, led, cable],
+  },
+  {
+    id: 'electronics',
+    icon: 'transistor',
+    title: 'Elektronik',
+    calculators: [bjtBias],
+  },
+  {
+    id: 'signals',
+    icon: 'sine',
+    title: 'Sinyaller ve sistemler',
+    calculators: [fourier, bode],
+  },
+  {
+    id: 'control',
+    icon: 'target',
+    title: 'Kontrol sistemleri',
+    calculators: [secondOrder],
+  },
+  {
+    id: 'power',
+    icon: 'bolt',
+    title: 'Makinalar ve güç sistemleri',
+    calculators: [transformer, threePhase],
+  },
+  {
+    id: 'comm',
+    icon: 'broadcast',
+    title: 'Haberleşme',
+    calculators: [modulation],
   },
   {
     id: 'wind',
@@ -68,7 +106,7 @@ export const categories = [
     id: 'digital',
     icon: 'binary',
     title: 'Sayısal',
-    calculators: [numberBase],
+    calculators: [karnaugh, numberBase],
   },
 ];
 
@@ -106,6 +144,14 @@ const META = {
   'circuit/thevenin': ['Thevenin ↔ Norton, yük gücü, en büyük güç aktarımı', 'thevenin norton esdeger maksimum guc aktarimi'],
   'circuit/wye-delta': ['Yıldız ve üçgen direnç ağları arası dönüşüm', 'yildiz ucgen y delta donusum star'],
   'circuit/cable': ['Gerilim düşümüne göre kablo kesiti (DC, 1 faz, 3 faz)', 'iletken kesit kablo gerilim dusumu mm2 bakir aluminyum'],
+  'electronics/bjt-bias': ['Gerilim bölücülü polarmada Q noktası ve yük doğrusu', 'bjt transistor polarma bias q noktasi yuk dogrusu npn'],
+  'signals/fourier': ['Kare, üçgen, testere dalganın harmonikleri', 'fourier serisi harmonik thd gibbs kare dalga'],
+  'signals/bode': ['Kutup/sıfırdan genlik-faz, kazanç ve faz payı', 'bode diyagrami faz payi kazanc payi kararlilik transfer fonksiyonu'],
+  'control/second-order': ['ζ, ωn → aşım, yerleşme, yükselme süresi', 'ikinci derece sistem basamak yaniti asim yerlesme sonum zeta kontrol'],
+  'machines/transformer': ['Oran, akımlar, verim ve gerilim regülasyonu', 'transformator trafo verim regulasyon donusturme orani'],
+  'machines/three-phase': ['Y/Δ faz-hat değerleri ve üç faz güç', 'uc faz yildiz ucgen hat gerilimi faz akimi guc'],
+  'comm/modulation': ['AM güç ve verim, FM Carson ve Bessel spektrumu', 'am fm modulasyon carson bessel bant genisligi haberlesme'],
+  'digital/karnaugh': ['Mintermlerden en sade SOP, K-haritası', 'karnaugh harita mantik sadelestirme quine mccluskey sop minterm'],
   'rf/link-budget': ['Alınan güç, bağlantı payı ve en büyük mesafe', 'friis link butce fspl yol kaybi menzil alinan guc eirp'],
   'rf/patch': ['f, εr, h → W, L ve girintili besleme', 'yama patch mikroserit anten tasarim inset'],
   'circuit/combine': ['R, L, C seri ve paralel toplam değer', 'seri paralel esdeger direnc kondansator bobin toplam'],

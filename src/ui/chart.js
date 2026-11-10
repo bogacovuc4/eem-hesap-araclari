@@ -57,19 +57,24 @@ function tableView(caption, headers, rows) {
  * Çizgi grafiği. points: [{x, y}] (x artan), marker: {x, y} (vurgulanan nokta),
  * refs: [{x, label}] dikey referans çizgileri (ör. τ, 5τ).
  */
-export function lineChart({ title, points, xLabel, yLabel, xFormat, yFormat, marker = null, refs = [], tableRows = null, tableHeaders = null }) {
+export function lineChart({
+  title, points, xLabel, yLabel, xFormat, yFormat, marker = null, refs = [], tableRows = null, tableHeaders = null,
+  reference = null, labels = null, yMinFixed = null,
+}) {
+  // reference: ikinci (kesikli, sönük) seri; labels: [ana seri adı, referans adı] gösterge için
   const xs = points.map((p) => p.x);
-  const ys = points.map((p) => p.y);
+  const ys = [...points, ...(reference ?? [])].map((p) => p.y);
   const xMin = Math.min(...xs);
   const xMax = Math.max(...xs);
-  const yTicks = niceTicks(Math.min(0, ...ys), Math.max(0, ...ys));
+  const yTicks = niceTicks(yMinFixed ?? Math.min(0, ...ys), Math.max(0, ...ys));
   const yMin = yTicks[0];
   const yMax = yTicks[yTicks.length - 1];
   const xScale = (x) => PAD.left + ((x - xMin) / (xMax - xMin)) * (W - PAD.left - PAD.right);
   const yScale = (y) => H - PAD.bottom - ((y - yMin) / (yMax - yMin)) * (H - PAD.top - PAD.bottom);
   const xTicks = niceTicks(xMin, xMax, 6).filter((t) => t >= xMin - 1e-12 && t <= xMax + 1e-12);
 
-  const path = points.map((p, i) => `${i ? 'L' : 'M'}${xScale(p.x).toFixed(2)},${yScale(p.y).toFixed(2)}`).join('');
+  const toPath = (list) => list.map((p, i) => `${i ? 'L' : 'M'}${xScale(p.x).toFixed(2)},${yScale(Math.max(p.y, yTicks[0])).toFixed(2)}`).join('');
+  const path = toPath(points);
   const cross = s('line', { y1: PAD.top, y2: H - PAD.bottom, class: 'chart-cross', visibility: 'hidden' });
   const hoverDot = s('circle', { r: 5, class: 'chart-dot', visibility: 'hidden' });
   const tip = el('div', { class: 'chart-tip', hidden: true });
@@ -77,9 +82,11 @@ export function lineChart({ title, points, xLabel, yLabel, xFormat, yFormat, mar
   const svg = s('svg', { viewBox: `0 0 ${W} ${H}`, class: 'chart-svg', role: 'img', 'aria-label': title },
     s('title', {}, title),
     frame({ xTicks, yTicks, xScale, yScale, xFormat, yFormat, xLabel, yLabel }),
-    ...refs.filter((r) => r.x >= xMin && r.x <= xMax).map((r) => s('g', {},
+    // Yakın referansların etiketleri üst üste binmesin diye her biri bir satır aşağı kayar
+    ...refs.filter((r) => r.x >= xMin && r.x <= xMax).map((r, i) => s('g', {},
       s('line', { x1: xScale(r.x), x2: xScale(r.x), y1: PAD.top, y2: H - PAD.bottom, class: 'chart-ref' }),
-      s('text', { x: xScale(r.x) + 4, y: PAD.top + 10, class: 'chart-ref-label' }, r.label))),
+      s('text', { x: xScale(r.x) + 4, y: PAD.top + 10 + i * 13, class: 'chart-ref-label' }, r.label))),
+    reference ? s('path', { d: toPath(reference), class: 'chart-line-ref' }) : null,
     s('path', { d: path, class: 'chart-line' }),
     marker ? s('circle', { cx: xScale(marker.x), cy: yScale(marker.y), r: 5, class: 'chart-marker' }) : null,
     cross, hoverDot,
@@ -111,8 +118,14 @@ export function lineChart({ title, points, xLabel, yLabel, xFormat, yFormat, mar
   });
   svg.addEventListener('pointerleave', hide);
 
+  const legend = labels && reference
+    ? el('div', { class: 'chart-legend' },
+      el('span', {}, el('i', { class: 'legend-line' }), labels[0]),
+      el('span', {}, el('i', { class: 'legend-line legend-ref' }), labels[1]))
+    : null;
   return el('figure', { class: 'chart-figure' },
     el('figcaption', { class: 'chart-title' }, title),
+    legend,
     box,
     tableRows ? tableView(title, tableHeaders, tableRows) : null);
 }

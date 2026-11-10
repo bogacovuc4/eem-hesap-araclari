@@ -802,3 +802,48 @@ a:hover { color: var(--red); }
   .nav-group-head { min-height: 44px; }
   .nav-link { padding: 9px 10px; }
 }
+
+/* ---------- Grafik: referans seri ve gösterge ---------- */
+.chart-line-ref { fill: none; stroke: var(--text-muted); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: .82rem; color: var(--text-muted); margin-bottom: 4px; }
+.chart-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend-line { display: inline-block; width: 18px; height: 0; border-top: 2px solid var(--accent); }
+.legend-ref { border-top: 2px dashed var(--text-muted); }
+.chart-pair { display: grid; gap: 16px; width: 100%; }
+
+/* ---------- Karnaugh haritası ---------- */
+.kmap-wrap { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px 28px; align-items: start; }
+.kmap { border-collapse: collapse; font-family: var(--mono); }
+.kmap th { padding: 4px 10px; color: var(--text-muted); font-weight: 600; font-size: .85rem; }
+.kmap-corner { font-size: .75rem !important; }
+.kmap-cell {
+  position: relative;
+  width: 52px; height: 46px;
+  border: 1px solid var(--border-input);
+  text-align: center;
+  background: var(--surface);
+  transition: background-color .12s ease;
+}
+.kmap-val { font-size: 1.15rem; font-weight: 700; }
+.kmap-idx { position: absolute; right: 4px; bottom: 2px; font-size: .62rem; color: var(--text-muted); }
+.kmap-one .kmap-val { color: var(--brand); }
+.kmap-zero .kmap-val { color: var(--text-muted); font-weight: 400; }
+.kmap-dc .kmap-val { color: var(--accent); }
+.kmap-hit { background: color-mix(in srgb, var(--red) 18%, var(--surface)); outline: 2px solid var(--red); outline-offset: -2px; }
+.kmap-terms { display: flex; flex-wrap: wrap; gap: 8px; }
+.kmap-term {
+  padding: 6px 12px;
+  border: 1px solid var(--border-input);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--brand);
+  font: inherit;
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.kmap-term small { font-weight: 400; color: var(--text-muted); }
+.kmap-term:hover, .kmap-term:focus-visible { border-color: var(--red); color: var(--red); }
+@media (max-width: 760px) {
+  .kmap-wrap { grid-template-columns: minmax(0, 1fr); }
+  .kmap-cell { width: 44px; height: 40px; }
+}

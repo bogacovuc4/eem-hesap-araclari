@@ -37,6 +37,17 @@ const PATHS = {
     ['path', { d: 'M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z' }],
     ['circle', { cx: 7.5, cy: 7.5, r: 1.2 }],
   ],
+  transistor: [
+    ['circle', { cx: 12, cy: 12, r: 9 }],
+    ['path', { d: 'M9 7v10M3 12h6M9 10l5-3V3M9 14l5 3v4' }],
+  ],
+  sine: [['path', { d: 'M2 12c2.5-7 4.5-7 7 0s4.5 7 7 0 3.5-5 6-5' }]],
+  target: [['circle', { cx: 12, cy: 12, r: 9 }], ['circle', { cx: 12, cy: 12, r: 5 }], ['circle', { cx: 12, cy: 12, r: 1 }]],
+  bolt: [['path', { d: 'M13 2 4 14h7l-1 8 9-12h-7z' }]],
+  broadcast: [
+    ['circle', { cx: 12, cy: 12, r: 2 }],
+    ['path', { d: 'M16.2 7.8a6 6 0 0 1 0 8.4M7.8 16.2a6 6 0 0 1 0-8.4M19.1 4.9a10 10 0 0 1 0 14.2M4.9 19.1a10 10 0 0 1 0-14.2' }],
+  ],
   binary: [
     ['rect', { x: 14, y: 14, width: 4, height: 6, rx: 2 }],
     ['rect', { x: 6, y: 4, width: 4, height: 6, rx: 2 }],
