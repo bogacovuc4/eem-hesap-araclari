@@ -46,6 +46,9 @@ import secondOrder from './ui/control/second-order.js';
 import transformer from './ui/machines/transformer.js';
 import threePhase from './ui/machines/three-phase.js';
 import modulation from './ui/comm/modulation.js';
+import voltageDrop from './ui/distribution/voltage-drop.js';
+import shortCircuit from './ui/distribution/short-circuit.js';
+import grounding from './ui/distribution/grounding.js';
 
 export const categories = [
   {
@@ -81,8 +84,14 @@ export const categories = [
   {
     id: 'power',
     icon: 'bolt',
-    title: 'Makinalar ve güç sistemleri',
+    title: 'Elektrik makineleri ve güç sistemleri',
     calculators: [transformer, threePhase],
+  },
+  {
+    id: 'distribution',
+    icon: 'pylon',
+    title: 'Enerji dağıtımı',
+    calculators: [voltageDrop, shortCircuit, grounding],
   },
   {
     id: 'comm',
@@ -150,6 +159,9 @@ const META = {
   'control/second-order': ['ζ, ωn → aşım, yerleşme, yükselme süresi', 'ikinci derece sistem basamak yaniti asim yerlesme sonum zeta kontrol'],
   'machines/transformer': ['Oran, akımlar, verim ve gerilim regülasyonu', 'transformator trafo verim regulasyon donusturme orani'],
   'machines/three-phase': ['Y/Δ faz-hat değerleri ve üç faz güç', 'uc faz yildiz ucgen hat gerilimi faz akimi guc'],
+  'distribution/voltage-drop': ['Tek/üç faz %e, hat kaybı, kesit; çok yüklü hatta yük momenti', 'gerilim dusumu yuzde e kesit yuk momenti dagitim hatti kablo kayip enerji dagitimi'],
+  'distribution/short-circuit': ['Trafo, şebeke ve kablodan I″k3 ve darbe akımı', 'kisa devre akimi iec 60909 trafo uk darbe akimi kesme kapasitesi'],
+  'distribution/grounding': ['Çubuk, şerit ve levha topraklayıcı direnci', 'topraklama direnci cubuk serit levha toprak ozdirenci elektrot'],
   'comm/modulation': ['AM güç ve verim, FM Carson ve Bessel spektrumu', 'am fm modulasyon carson bessel bant genisligi haberlesme'],
   'digital/karnaugh': ['Mintermlerden en sade SOP, K-haritası', 'karnaugh harita mantik sadelestirme quine mccluskey sop minterm'],
   'rf/link-budget': ['Alınan güç, bağlantı payı ve en büyük mesafe', 'friis link butce fspl yol kaybi menzil alinan guc eirp'],

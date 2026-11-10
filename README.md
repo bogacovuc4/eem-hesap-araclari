@@ -13,7 +13,8 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 | Elektronik | BJT gerilim bölücülü polarma (Q noktası, çalışma bölgesi, devre şeması, DC yük doğrusu) |
 | Sinyaller ve sistemler | Fourier serisi (kare/üçgen/testere, kısmi toplam ve harmonik grafikleri, THD) · Bode diyagramı (kutup/sıfır, genlik-faz, kazanç ve faz payı) |
 | Kontrol sistemleri | İkinci derece sistem (aşım, yükselme, tepe, yerleşme süresi; basamak yanıtı grafiği) |
-| Makinalar ve güç sistemleri | Transformatör (oran, akımlar, empedans yansıtma, verim–yük eğrisi, regülasyon) · Üç fazlı sistem (Y/Δ faz-hat değerleri, güçler) |
+| Elektrik makineleri ve güç sistemleri | Transformatör (oran, akımlar, empedans yansıtma, verim–yük eğrisi, regülasyon) · Üç fazlı sistem (Y/Δ faz-hat değerleri, güçler) |
+| Enerji dağıtımı | Gerilim düşümü (tek/üç faz, reaktanslı, gereken kesit; çok yüklü hatta yük momentleri ve hat boyunca düşüm grafiği) · Kısa devre akımı (şebeke + trafo + kablo, I″k3, darbe akımı) · Topraklama direnci (çubuk, şerit, levha) |
 | Haberleşme | AM / FM modülasyonu (güç, verim, Carson bant genişliği, Bessel spektrumu) |
 | Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Weibull ile yıllık enerji üretimi ve kapasite faktörü (grafikli) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
 | Sayısal | Karnaugh haritası ve mantık sadeleştirme (Quine–McCluskey, en sade SOP) · Sayı tabanı dönüştürücü (2/8/10/16, 64 bite kadar, ikinin tümleyeni, bit ızgarası) |
@@ -73,7 +74,7 @@ src/
     constants.js      c0, μ0, ε0, η0
     units.js          Birim tabloları, sayı ayrıştırma, SI ön ekli biçimlendirme
     validate.js       Girdi doğrulama mesajları
-    rf.js · rf2.js · circuit.js · circuit2.js · electronics.js · signals.js · power.js · comm.js · logic.js · wind.js · codes.js · digital.js
+    rf.js · rf2.js · circuit.js · circuit2.js · electronics.js · signals.js · power.js · distribution.js · comm.js · logic.js · wind.js · codes.js · digital.js
     math.js           Simpson integrali, Bessel J0, Gamma fonksiyonu, karmaşık sayılar
   ui/                 Arayüz
     dom.js            Küçük el() DOM oluşturucu

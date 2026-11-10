@@ -1,4 +1,4 @@
-// Elektrik makinaları ve güç sistemleri: transformatör, üç fazlı dengeli sistem.
+// Elektrik makineleri ve güç sistemleri: transformatör, üç fazlı dengeli sistem.
 import { assert } from './validate.js';
 
 // ---------------------------------------------------------------------------
