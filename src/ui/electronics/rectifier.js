@@ -45,7 +45,7 @@ export default {
             };
           },
           formulas: [
-            formula(String.raw`V_m=\sqrt2\,V_{rms}-n\,V_D,\qquad V_{dc}^{\,\text{filtresiz}}=\frac{V_m}{\pi}\ \text{(yarım)},\ \frac{2V_m}{\pi}\ \text{(tam)}`, 'Vm = √2·Vrms − n·VD;  filtresiz Vdc = Vm/π (yarım), 2Vm/π (tam)'),
+            formula(String.raw`V_m=\sqrt2\,V_{\text{rms}}-n\,V_D,\qquad V_{dc}^{\,\text{filtresiz}}=\frac{V_m}{\pi}\ \text{(yarım)},\ \frac{2V_m}{\pi}\ \text{(tam)}`, 'Vm = √2·Vrms − n·VD;  filtresiz Vdc = Vm/π (yarım), 2Vm/π (tam)'),
             formula(String.raw`V_{r(pp)}\approx\frac{V_{dc}}{f_r R_L C},\qquad V_{dc}=V_m-\frac{V_{r(pp)}}{2},\qquad r=\frac{V_{r(pp)}}{2\sqrt3\,V_{dc}}`, 'Vr(pp) ≈ Vdc/(fr·RL·C),  Vdc = Vm − Vr/2,  r = Vr(pp)/(2√3·Vdc)'),
           ],
           notes: [

@@ -331,3 +331,67 @@ export function routhTable(coeffs) {
     allSameSign,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Ayrık Fourier dönüşümü (DFT)
+// ---------------------------------------------------------------------------
+
+/** X[k] = Σ x[n]·e^(−j2πkn/N). Dönüş: [{ k, re, im, mag, phaseDeg }] */
+export function dft(x) {
+  const n = x.length;
+  assert(n >= 1 && n <= 256, 'Örnek sayısı 1–256 arasında olmalı.');
+  const out = [];
+  for (let k = 0; k < n; k += 1) {
+    let re = 0;
+    let im = 0;
+    for (let m = 0; m < n; m += 1) {
+      const a = (-2 * Math.PI * k * m) / n;
+      re += x[m] * Math.cos(a);
+      im += x[m] * Math.sin(a);
+    }
+    // Kayan nokta artığını temizle
+    if (Math.abs(re) < 1e-10) re = 0;
+    if (Math.abs(im) < 1e-10) im = 0;
+    out.push({ k, re, im, mag: Math.hypot(re, im), phaseDeg: (Math.atan2(im, re) * 180) / Math.PI });
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Kararlı hal hatası (birim geri beslemeli sistem)
+// ---------------------------------------------------------------------------
+
+/**
+ * G(s) = N(s)/D(s), katsayılar en yüksek dereceden. Sistem tipi ve hata sabitleri:
+ *   Kp = lim G(s), Kv = lim sG(s), Ka = lim s²G(s)  (s → 0)
+ *   e(∞): basamak 1/(1+Kp), rampa 1/Kv, parabol 1/Ka
+ * Kapalı çevrim kararlılığı Routh ile denetlenir (hata formülleri yalnızca kararlı sistemde geçerli).
+ */
+export function steadyStateError(num, den) {
+  assert(num.some((c) => c !== 0), 'Pay sıfır olamaz.');
+  assert(den.length >= 1 && den[0] !== 0, 'Paydanın en yüksek dereceli katsayısı sıfır olamaz.');
+  const trailing = (p) => { let z = 0; for (let k = p.length - 1; k >= 0 && p[k] === 0; k -= 1) z += 1; return z; };
+  const m = trailing(num);
+  const t = trailing(den);
+  const c = num[num.length - 1 - m] / den[den.length - 1 - t];
+  const type = t - m;
+  const limit = (k) => (k + m - t === 0 ? c : k + m - t > 0 ? 0 : Infinity);
+  const kp = limit(0);
+  const kv = limit(1);
+  const ka = limit(2);
+  const inv = (x) => (x === Infinity ? 0 : x === 0 ? Infinity : 1 / x);
+  // Kapalı çevrim karakteristik polinomu D + N
+  const len = Math.max(num.length, den.length);
+  const pad = (p) => [...Array(len - p.length).fill(0), ...p];
+  const charPoly = pad(den).map((d, k) => d + pad(num)[k]);
+  while (charPoly.length > 1 && charPoly[0] === 0) charPoly.shift();
+  const routh = charPoly.length >= 2 ? routhTable(charPoly) : null;
+  return {
+    type, kp, kv, ka,
+    eStep: kp === Infinity ? 0 : 1 / (1 + kp),
+    eRamp: inv(kv),
+    eParabola: inv(ka),
+    charPoly,
+    stable: routh ? routh.stable : null,
+  };
+}

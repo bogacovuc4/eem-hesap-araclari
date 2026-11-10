@@ -61,3 +61,51 @@ export function fmModulation({ deviation, fm, fc = null, threshold = 0.01 }) {
     fc,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Kanal kapasitesi ve bit hata oranı
+// ---------------------------------------------------------------------------
+
+/** Tamamlayıcı hata fonksiyonu erfc(x) (Numerical Recipes, göreli hata < 1,2×10⁻⁷). */
+export function erfc(x) {
+  const z = Math.abs(x);
+  const t = 1 / (1 + 0.5 * z);
+  const r = t * Math.exp(-z * z - 1.26551223 + t * (1.00002368 + t * (0.37409196 + t * (0.09678418
+    + t * (-0.18628806 + t * (0.27886807 + t * (-1.13520398 + t * (1.48851587
+    + t * (-0.82215223 + t * 0.17087277)))))))));
+  return x >= 0 ? r : 2 - r;
+}
+
+/** Gauss Q fonksiyonu Q(x) = ½·erfc(x/√2). */
+export const qFunc = (x) => 0.5 * erfc(x / Math.SQRT2);
+
+/** Shannon–Hartley: C = B·log2(1 + SNR). SNR doğrusal. */
+export function shannonCapacity({ b, snr }) {
+  assert(b > 0, 'Bant genişliği sıfırdan büyük olmalı.');
+  assert(snr >= 0, 'SNR negatif olamaz.');
+  const c = b * Math.log2(1 + snr);
+  return { c, spectralEff: c / b, snrDb: 10 * Math.log10(snr) };
+}
+
+/** Gürültüsüz kanalda Nyquist en büyük bit hızı: R = 2B·log2(M). */
+export function nyquistRate({ b, m }) {
+  assert(b > 0 && m >= 2, 'B > 0 ve M ≥ 2 olmalı.');
+  return 2 * b * Math.log2(m);
+}
+
+/**
+ * AWGN kanalda bit hata olasılığı (Eb/N0 doğrusal).
+ *   bpsk/qpsk: Q(√(2Eb/N0)); bfsk (eş fazlı): Q(√(Eb/N0));
+ *   dbpsk: ½e^(−Eb/N0); ncfsk (eş fazsız FSK): ½e^(−Eb/2N0)
+ */
+export function bitErrorRate(scheme, ebn0) {
+  assert(ebn0 >= 0, 'Eb/N0 negatif olamaz.');
+  switch (scheme) {
+    case 'bpsk':
+    case 'qpsk': return qFunc(Math.sqrt(2 * ebn0));
+    case 'bfsk': return qFunc(Math.sqrt(ebn0));
+    case 'dbpsk': return 0.5 * Math.exp(-ebn0);
+    case 'ncfsk': return 0.5 * Math.exp(-ebn0 / 2);
+    default: throw new RangeError(`Bilinmeyen modülasyon: ${scheme}`);
+  }
+}

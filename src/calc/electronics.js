@@ -111,3 +111,81 @@ export function zenerDesign({ vsMin, vsMax, vz, ilMax, izMin }) {
   const izWorst = (vsMax - vz) / rsMax;
   return { rsMax, izWorst, pzWorst: vz * izWorst, prs: (vsMax - vz) ** 2 / rsMax };
 }
+
+// ---------------------------------------------------------------------------
+// Diyot (Shockley denklemi)
+// ---------------------------------------------------------------------------
+const Q_E = 1.602176634e-19;
+const K_B = 1.380649e-23;
+
+/** Isıl gerilim VT = kT/q (T kelvin). */
+export function thermalVoltage(t = 300) {
+  assert(t > 0, 'Sıcaklık 0 K’den büyük olmalı.');
+  return (K_B * t) / Q_E;
+}
+
+/**
+ * I = Is·(e^(V/nVT) − 1). v verilirse akım, i verilirse gerilim bulunur.
+ * Küçük sinyal (dinamik) direnci rd = nVT / (I + Is).
+ */
+export function diodeShockley({ is, n = 1, t = 300, v = null, i = null }) {
+  assert(is > 0, 'Doyma akımı Is sıfırdan büyük olmalı.');
+  assert(n >= 1 && n <= 2.5, 'İdealite faktörü n genellikle 1–2 arasındadır.');
+  const vt = thermalVoltage(t);
+  if (v !== null) i = is * Math.expm1(v / (n * vt));
+  else {
+    assert(i > -is, 'Ters akım −Is’den büyük olmalı.');
+    v = n * vt * Math.log1p(i / is);
+  }
+  return { v, i, vt, rd: (n * vt) / (i + is), p: v * i };
+}
+
+// ---------------------------------------------------------------------------
+// BJT küçük sinyal modeli ve ortak emetörlü kuvvetlendirici
+// ---------------------------------------------------------------------------
+
+/**
+ * gm = IC/VT, rπ = β/gm, re = VT/IE, ro = VA/IC.
+ * Ortak emetör, RE köprülenmemiş (re_ext) kısmıyla:
+ *   Av = −β·(RC∥RL∥ro) / (rπ + (β+1)·RE)    (RE = 0 ise −gm·(RC∥RL∥ro))
+ *   Rin(baz) = rπ + (β+1)·RE,  Rin = RB ∥ Rin(baz)
+ */
+export function bjtSmallSignal({ ic, beta, va = 0, t = 300, rc, rl = Infinity, re = 0, rb = Infinity }) {
+  assert(ic > 0 && beta > 0, 'IC ve β sıfırdan büyük olmalı.');
+  const vt = thermalVoltage(t);
+  const gm = ic / vt;
+  const rpi = beta / gm;
+  const ie = ic * (beta + 1) / beta;
+  const reIntr = vt / ie;
+  const ro = va > 0 ? va / ic : Infinity;
+  const par = (...rs) => 1 / rs.reduce((s, r) => s + (Number.isFinite(r) ? 1 / r : 0), 0);
+  const rLoad = par(rc, rl, ro);
+  const rinBase = rpi + (beta + 1) * re;
+  const av = (-beta * rLoad) / rinBase;
+  return { vt, gm, rpi, reIntr, ro, rLoad, rinBase, rin: par(rb, rinBase), rout: par(rc, ro), av, avDb: 20 * Math.log10(Math.abs(av)) };
+}
+
+// ---------------------------------------------------------------------------
+// Sallen–Key birim kazançlı alçak geçiren filtre (2. derece)
+// ---------------------------------------------------------------------------
+
+/** f0 = 1/(2π√(R1R2C1C2)), Q = √(R1R2C1C2) / (C2(R1+R2)); C1 geri besleme, C2 toprak kondansatörü. */
+export function sallenKeyLowpass({ r1, r2, c1, c2 }) {
+  assert(r1 > 0 && r2 > 0 && c1 > 0 && c2 > 0, 'Tüm elemanlar sıfırdan büyük olmalı.');
+  const root = Math.sqrt(r1 * r2 * c1 * c2);
+  return { f0: 1 / (2 * Math.PI * root), q: root / (c2 * (r1 + r2)) };
+}
+
+/** Eşit dirençli tasarım: C1 = 4Q²·C2, R = 1/(2π·f0·2Q·C2). */
+export function sallenKeyDesign({ f0, q, c2 }) {
+  assert(f0 > 0 && q > 0 && c2 > 0, 'f0, Q ve C2 sıfırdan büyük olmalı.');
+  const c1 = 4 * q * q * c2;
+  const r = 1 / (2 * Math.PI * f0 * 2 * q * c2);
+  return { r, c1, c2 };
+}
+
+/** İkinci derece alçak geçirenin f frekansındaki kazancı (dB). */
+export function secondOrderLowpassDb(f, f0, q) {
+  const x = f / f0;
+  return -10 * Math.log10((1 - x * x) ** 2 + (x / q) ** 2);
+}

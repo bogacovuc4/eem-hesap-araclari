@@ -34,6 +34,8 @@ export const categories = [
     calculators: [
       calc('circuit/ohm', 'Ohm yasası ve güç', () => import('./ui/circuit/ohm.js')),
       calc('circuit/phasor', 'Fazör / karmaşık sayı', () => import('./ui/circuit/phasor.js')),
+      calc('circuit/linear-solver', 'Düğüm / çevre denklem çözücü', () => import('./ui/circuit/linear-solver.js')),
+      calc('circuit/waveform', 'RMS ve ortalama değer', () => import('./ui/circuit/waveform.js')),
       calc('circuit/combine', 'Seri / paralel birleştirici', () => import('./ui/circuit/combine.js')),
       calc('circuit/divider', 'Gerilim bölücü', () => import('./ui/circuit/divider.js')),
       calc('circuit/wye-delta', 'Yıldız ↔ üçgen (Y–Δ)', () => import('./ui/circuit/wye-delta.js')),
@@ -59,6 +61,9 @@ export const categories = [
       calc('electronics/bjt-bias', 'BJT polarma (gerilim bölücü)', () => import('./ui/electronics/bjt-bias.js')),
       calc('electronics/rectifier', 'Doğrultucu ve filtre', () => import('./ui/electronics/rectifier.js')),
       calc('electronics/zener', 'Zener regülatör', () => import('./ui/electronics/zener.js')),
+      calc('electronics/diode', 'Diyot (Shockley denklemi)', () => import('./ui/electronics/diode.js')),
+      calc('electronics/bjt-small-signal', 'BJT küçük sinyal (ortak emetör)', () => import('./ui/electronics/bjt-small-signal.js')),
+      calc('electronics/sallen-key', 'Sallen–Key aktif filtre', () => import('./ui/electronics/sallen-key.js')),
     ],
   },
   {
@@ -70,6 +75,7 @@ export const categories = [
       calc('em/capacitance', 'Kapasitans (geometri)', () => import('./ui/em/capacitance.js')),
       calc('em/magnetic-field', 'Manyetik alan (Biot–Savart, Amper)', () => import('./ui/em/magnetic-field.js')),
       calc('em/inductance', 'Endüktans (geometri)', () => import('./ui/em/inductance.js')),
+      calc('em/plane-wave', 'Düzlem dalga ve yansıma', () => import('./ui/em/plane-wave.js')),
     ],
   },
   {
@@ -80,6 +86,7 @@ export const categories = [
       calc('signals/fourier', 'Fourier serisi', () => import('./ui/signals/fourier.js')),
       calc('signals/bode', 'Bode diyagramı', () => import('./ui/signals/bode.js')),
       calc('signals/adc', 'ADC ve örnekleme', () => import('./ui/signals/adc.js')),
+      calc('signals/dft', 'DFT (ayrık Fourier dönüşümü)', () => import('./ui/signals/dft.js')),
     ],
   },
   {
@@ -89,6 +96,7 @@ export const categories = [
     calculators: [
       calc('control/second-order', 'İkinci derece sistem', () => import('./ui/control/second-order.js')),
       calc('control/routh', 'Routh–Hurwitz kararlılık', () => import('./ui/control/routh.js')),
+      calc('control/steady-state', 'Kararlı hal hatası', () => import('./ui/control/steady-state.js')),
     ],
   },
   {
@@ -99,6 +107,8 @@ export const categories = [
       calc('machines/transformer', 'Transformatör', () => import('./ui/machines/transformer.js')),
       calc('machines/three-phase', 'Üç fazlı sistem', () => import('./ui/machines/three-phase.js')),
       calc('machines/induction-motor', 'Asenkron motor', () => import('./ui/machines/induction-motor.js')),
+      calc('machines/dc-motor', 'DC motor', () => import('./ui/machines/dc-motor.js')),
+      calc('machines/per-unit', 'Birim değer (pu) sistemi', () => import('./ui/machines/per-unit.js')),
     ],
   },
   {
@@ -127,6 +137,7 @@ export const categories = [
     title: 'Haberleşme',
     calculators: [
       calc('comm/modulation', 'AM / FM modülasyonu', () => import('./ui/comm/modulation.js')),
+      calc('comm/channel', 'Kanal kapasitesi ve BER', () => import('./ui/comm/channel.js')),
     ],
   },
   {
@@ -175,6 +186,7 @@ export const categories = [
     icon: 'book',
     title: 'Başvuru',
     calculators: [
+      calc('reference/formulas', 'Formül özeti', () => import('./ui/reference/formulas.js')),
       calc('reference/tables', 'Sabitler ve tablolar', () => import('./ui/reference/tables.js')),
     ],
   },
@@ -182,6 +194,18 @@ export const categories = [
 
 // Arama ve ana sayfa için kısa açıklamalar ve ek anahtar kelimeler.
 const META = {
+  'reference/formulas': ['Derslere göre 140+ temel formül, aranabilir', 'formul ozet formuller kopya kagidi cheat sheet laplace fourier maxwell boole tablo ders'],
+  'circuit/linear-solver': ['G·V = I ya da R·I = V sistemini çözer', 'dugum gerilimi cevre akimi mesh nodal dogrusal denklem matris cramer gauss kirchhoff'],
+  'circuit/waveform': ['Vrms, ortalama, tepe ve biçim faktörü', 'rms etkin deger ortalama tepe faktoru bicim faktoru sinus kare ucgen pwm darbe dogrultulmus'],
+  'electronics/diode': ['I = Is(e^(V/nVT) − 1), rd ve I–V eğrisi', 'diyot shockley doyma akimi isil gerilim dinamik direnc karakteristik'],
+  'electronics/bjt-small-signal': ['gm, rπ, ro; ortak emetör kazancı ve Rin', 'bjt kucuk sinyal hibrit pi gm rpi ro ortak emetor kazanc giris direnci'],
+  'electronics/sallen-key': ['2. derece aktif alçak geçiren: f0, Q, tasarım', 'sallen key aktif filtre op-amp butterworth bessel ikinci derece alcak geciren'],
+  'em/plane-wave': ['α, β, η, deri derinliği; dik gelişte Γ ve τ', 'duzlem dalga kayipli ortam zayiflama faz sabiti dalga empedansi yansima iletim snell elektromanyetik'],
+  'signals/dft': ['Örneklerden DFT katsayıları ve spektrum', 'dft fft ayrik fourier donusumu spektrum parseval ornek'],
+  'control/steady-state': ['Sistem tipi, Kp, Kv, Ka ve kalıcı hata', 'kararli hal hatasi sistem tipi kp kv ka basamak rampa parabol kontrol'],
+  'machines/dc-motor': ['Zıt EMK, moment, hız ve güçler', 'dc motor zit emk endüvi moment tork hiz sont serbest uyarmali'],
+  'machines/per-unit': ['Baz değerler, ohm ↔ pu, baz değiştirme', 'birim deger per unit pu baz empedans guc sistemleri'],
+  'comm/channel': ['Shannon kapasitesi, Nyquist hızı, BER', 'shannon kanal kapasitesi nyquist bit hizi ber bit hata orani bpsk qpsk fsk eb/n0 snr'],
   'circuit/ohm': ['V, I, R, P: bilinen ikisinden diğerleri', 'ohm yasasi gerilim akim direnc guc watt v=ir temel'],
   'circuit/phasor': ['Dikdörtgen ↔ kutupsal, dört işlem, paralel bağlama', 'fazor karmasik sayi kompleks polar kutupsal dikdortgen aci genlik j eslenik'],
   'electronics/rectifier': ['Yarım/tam dalga, köprü: Vdc, ripple, PIV', 'dogrultucu yarim dalga tam dalga kopru diyot ripple dalgalanma filtre kondansator piv'],
@@ -289,6 +313,18 @@ export function findCalculator(id) {
 // Sayfa altındaki "İlgili hesaplayıcılar": önce bu elle seçilmiş (dersler arası) bağlar,
 // sonra aynı dersteki komşu hesaplayıcılar.
 const RELATED = {
+  'circuit/linear-solver': ['circuit/thevenin', 'circuit/combine', 'reference/formulas'],
+  'circuit/waveform': ['electronics/rectifier', 'signals/fourier', 'circuit/ac-power'],
+  'electronics/diode': ['electronics/rectifier', 'electronics/zener', 'electronics/bjt-small-signal'],
+  'electronics/bjt-small-signal': ['electronics/bjt-bias', 'analog/common-source'],
+  'electronics/sallen-key': ['circuit/filter', 'signals/bode', 'circuit/opamp'],
+  'em/plane-wave': ['rf/skin-depth', 'rf/vswr', 'rf/wavelength'],
+  'signals/dft': ['signals/fourier', 'signals/adc'],
+  'control/steady-state': ['control/routh', 'control/second-order'],
+  'machines/dc-motor': ['machines/induction-motor'],
+  'machines/per-unit': ['distribution/short-circuit', 'machines/transformer'],
+  'comm/channel': ['comm/modulation', 'rf/noise', 'rf/link-budget'],
+  'reference/formulas': ['reference/tables', 'circuit/phasor'],
   'circuit/ohm': ['circuit/divider', 'circuit/combine', 'circuit/led', 'reference/tables'],
   'circuit/phasor': ['circuit/impedance', 'circuit/ac-power', 'rf/line-input', 'machines/three-phase'],
   'circuit/impedance': ['circuit/phasor', 'circuit/ac-power'],

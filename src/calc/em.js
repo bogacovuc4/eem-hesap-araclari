@@ -100,3 +100,60 @@ export function coaxialInductance({ a, b, length, muR = 1 }) {
 export function inductorEnergy(l, i) {
   return 0.5 * l * i * i;
 }
+
+// ---------------------------------------------------------------------------
+// Düzgün düzlem dalga
+// ---------------------------------------------------------------------------
+const csqrt = ({ re, im }) => {
+  const r = Math.hypot(re, im);
+  const a = Math.sqrt((r + re) / 2);
+  const b = Math.sign(im || 1) * Math.sqrt(Math.max(0, (r - re) / 2));
+  return { re: a, im: b };
+};
+const cmulx = (a, b) => ({ re: a.re * b.re - a.im * b.im, im: a.re * b.im + a.im * b.re });
+const cdivx = (a, b) => { const d = b.re ** 2 + b.im ** 2; return { re: (a.re * b.re + a.im * b.im) / d, im: (a.im * b.re - a.re * b.im) / d }; };
+
+/**
+ * Kayıplı ortamda düzlem dalga: γ = √(jωμ(σ + jωε)) = α + jβ, η = √(jωμ / (σ + jωε)).
+ * Dönüş: α (Np/m), β (rad/m), λ, vp, η (karmaşık), kayıp tanjantı, deri derinliği δ = 1/α.
+ */
+export function planeWave({ f, sigma = 0, epsR = 1, muR = 1 }) {
+  assert(f > 0, 'Frekans sıfırdan büyük olmalı.');
+  assert(sigma >= 0 && epsR >= 1 && muR >= 1, 'σ ≥ 0, εr ≥ 1, μr ≥ 1 olmalı.');
+  const w = 2 * Math.PI * f;
+  const jwmu = { re: 0, im: w * MU0 * muR };
+  const y = { re: sigma, im: w * EPS0 * epsR };
+  const gamma = csqrt(cmulx(jwmu, y));
+  const eta = csqrt(cdivx(jwmu, y));
+  const alpha = gamma.re;
+  const beta = gamma.im;
+  return {
+    alpha, beta,
+    alphaDb: 8.685889638 * alpha,
+    lambda: (2 * Math.PI) / beta,
+    vp: w / beta,
+    eta,
+    etaMag: Math.hypot(eta.re, eta.im),
+    etaDeg: (Math.atan2(eta.im, eta.re) * 180) / Math.PI,
+    lossTangent: sigma / (w * EPS0 * epsR),
+    delta: alpha > 0 ? 1 / alpha : Infinity,
+  };
+}
+
+/** Kayıpsız iki ortam arasında dik geliş: Γ = (η2 − η1)/(η2 + η1), τ = 1 + Γ. */
+export function normalIncidence({ epsR1 = 1, muR1 = 1, epsR2, muR2 = 1 }) {
+  assert(epsR1 >= 1 && epsR2 >= 1 && muR1 >= 1 && muR2 >= 1, 'εr ve μr en az 1 olmalı.');
+  const eta0 = Math.sqrt(MU0 / EPS0);
+  const eta1 = eta0 * Math.sqrt(muR1 / epsR1);
+  const eta2 = eta0 * Math.sqrt(muR2 / epsR2);
+  const g = (eta2 - eta1) / (eta2 + eta1);
+  const tau = 1 + g;
+  return {
+    eta1, eta2, gamma: g, tau,
+    reflected: g * g,
+    transmitted: 1 - g * g,
+    swr: (1 + Math.abs(g)) / (1 - Math.abs(g)),
+    n1: Math.sqrt(epsR1 * muR1),
+    n2: Math.sqrt(epsR2 * muR2),
+  };
+}

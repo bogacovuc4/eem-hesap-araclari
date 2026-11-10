@@ -114,3 +114,47 @@ export function inductionMotor({ f, poles, nr, pout = null, pin = null }) {
   const pcuRotor = pag !== null ? slip * pag : null;
   return { ns, slip, fr: slip * f, wr, torque, efficiency, pag, pcuRotor };
 }
+
+// ---------------------------------------------------------------------------
+// DC motor (serbest uyarmalı / şönt, sabit akı)
+// ---------------------------------------------------------------------------
+
+/**
+ * Ea = V − Ia·Ra, KΦ = Ea/ω, T = KΦ·Ia, Pgel = Ea·Ia.
+ * ia2 verilirse yeni yükte hız: n2 = (V − Ia2·Ra)/KΦ (akı sabit).
+ */
+export function dcMotor({ v, ra, ia, n, ia2 = null }) {
+  assert(v > 0 && ra >= 0 && ia >= 0 && n > 0, 'V, n > 0; Ra, Ia ≥ 0 olmalı.');
+  const ea = v - ia * ra;
+  assert(ea > 0, 'Zıt EMK pozitif olmalı (Ia·Ra < V).');
+  const w = (2 * Math.PI * n) / 60;
+  const kphi = ea / w;
+  const n0 = (v / kphi) * (60 / (2 * Math.PI));
+  let n2 = null;
+  let t2 = null;
+  if (ia2 !== null) {
+    const ea2 = v - ia2 * ra;
+    n2 = (ea2 / kphi) * (60 / (2 * Math.PI));
+    t2 = kphi * ia2;
+  }
+  return {
+    ea, w, kphi, torque: kphi * ia, pdev: ea * ia, pin: v * ia, pcu: ia * ia * ra,
+    n0, regulation: (n0 - n) / n, n2, t2,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Birim değer (per-unit) sistemi
+// ---------------------------------------------------------------------------
+
+/** Üç fazlı baz değerler: Zb = Vb²/Sb, Ib = Sb/(√3·Vb). Vb hat gerilimi. */
+export function perUnitBase({ sb, vb }) {
+  assert(sb > 0 && vb > 0, 'Baz güç ve gerilim sıfırdan büyük olmalı.');
+  return { zb: (vb * vb) / sb, ib: sb / (Math.sqrt(3) * vb), yb: sb / (vb * vb) };
+}
+
+/** Baz değiştirme: Zpu,yeni = Zpu,eski·(Vb,eski/Vb,yeni)²·(Sb,yeni/Sb,eski). */
+export function perUnitChangeBase({ zpu, sOld, vOld, sNew, vNew }) {
+  assert(sOld > 0 && vOld > 0 && sNew > 0 && vNew > 0, 'Baz değerler sıfırdan büyük olmalı.');
+  return zpu * (vOld / vNew) ** 2 * (sNew / sOld);
+}

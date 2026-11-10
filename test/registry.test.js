@@ -37,3 +37,18 @@ describe('hesaplayıcı kaydı', () => {
     }
   });
 });
+
+describe('formül özeti', () => {
+  it('her formülün başlığı, LaTeX’i ve düz metni var; hesaplayıcı bağlantıları geçerli', async () => {
+    const { FORMULA_SECTIONS } = await import('../src/ui/reference/formula-data.js');
+    let n = 0;
+    for (const sec of FORMULA_SECTIONS) {
+      for (const [title, tex, plain, , calcId] of sec.items) {
+        n += 1;
+        assert.ok(title && tex && plain, `${sec.id}: eksik alan`);
+        if (calcId) assert.ok(findCalculator(calcId), `${title}: ${calcId} yok`);
+      }
+    }
+    assert.ok(n >= 140, `formül sayısı ${n}`);
+  });
+});

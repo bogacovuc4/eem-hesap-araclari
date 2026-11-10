@@ -380,6 +380,9 @@ function renderHome() {
       el('h1', {}, el('span', {}, 'EEM Hesap Araçları')),
       el('p', {}, `${categories.length} alanda ${allCalculators().length} hesaplayıcı: RF'den güç sistemlerine, sinyallerden sayısal tasarıma. Değerler yazdıkça hesaplanır, bağlantı girdiğiniz değerleri saklar.`)),
     homeSearch.wrap,
+    el('nav', { class: 'quick-links', 'aria-label': 'Başvuru' },
+      el('a', { class: 'quick-link', href: '#/reference/formulas' }, icon('book', { size: 16 }), 'Formül özeti'),
+      el('a', { class: 'quick-link', href: '#/reference/tables' }, icon('tag', { size: 16 }), 'Sabitler ve tablolar')),
     recent.length
       ? el('section', { class: 'recent' },
         el('h2', { class: 'recent-title' }, icon('clock', { size: 16 }), 'Son kullanılanlar'),

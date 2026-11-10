@@ -31,9 +31,9 @@ export default {
             };
           },
           formulas: [
-            formula(String.raw`p=p_0\left(1-\frac{L\,h}{T_0}\right)^{\frac{g_0 M}{R^{*} L}},\qquad p_0=101\,325\ \text{Pa},\ T_0=288.15\ \text{K},\ L=0.0065\ \text{K/m}`,
+            formula(String.raw`p=p_0\left(1-\frac{L\,h}{T_0}\right)^{\frac{g_0 M}{R^{*} L}},\qquad p_0=101\,325\ \text{Pa},\ T_0=288{,}15\ \text{K},\ L=0{,}0065\ \text{K/m}`,
               'p = p0·(1 − L·h/T0)^(g0·M/(R*·L)),  p0 = 101 325 Pa, T0 = 288,15 K, L = 0,0065 K/m (üs ≈ 5,256)'),
-            formula(String.raw`\rho=\frac{p}{R_d\,T},\qquad R_d=\frac{R^{*}}{M}\approx 287.05\ \text{J/(kg·K)},\quad T=\vartheta+273.15`,
+            formula(String.raw`\rho=\frac{p}{R_d\,T},\qquad R_d=\frac{R^{*}}{M}\approx 287{,}05\ \ \mathrm{J/(kg\cdot K)},\quad T=\vartheta+273{,}15`,
               'ρ = p/(R_d·T),  R_d ≈ 287,05 J/(kg·K),  T = ϑ(°C) + 273,15'),
           ],
           notes: [
