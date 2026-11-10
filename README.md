@@ -169,7 +169,7 @@ Alan seçenekleri: `constraint` (`'positive'` varsayılan, `'nonnegative'`, `'an
 ## Gezinme ve favoriler
 
 - Üst çubuktaki **Ana menü** düğmesi her sayfadan ana sayfaya döndürür (telefonda yalnızca ev simgesi).
-- Bir dersin (kategorinin) başlığındaki **yıldıza** basınca ders favorilere eklenir; favoriler hem kenar menüsünde hem ana sayfada en üstte, eklenme sırasıyla görünür. Favoriler yalnızca o tarayıcıda (localStorage) saklanır.
+- Bir dersin (kategorinin) başlığındaki **yıldıza** basınca ders favorilere eklenir; favoriler hem kenar menüsünde hem ana sayfada en üstte, eklenme sırasıyla görünür. Tek tek hesaplayıcılar da favorilenebilir: hesaplayıcı sayfasının başlığındaki ya da ana sayfadaki her hesaplayıcının yanındaki yıldız. Favori hesaplayıcılar menünün ve ana sayfanın en üstünde ayrı bir listede görünür. Favoriler yalnızca o tarayıcıda (localStorage) saklanır.
 
 ## Görünüm ve arka plan
 

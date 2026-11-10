@@ -1189,3 +1189,17 @@ h1 {
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --star: #ffc233; } }
 :root[data-theme="dark"] { --star: #ffc233; }
 .home-card h2 .fav-btn .icon { color: inherit; }
+
+
+/* ---------- Favori hesaplayıcılar ---------- */
+.calc-item { position: relative; }
+.calc-item .calc-link { padding-right: 40px; }
+.calc-item .fav-btn { position: absolute; top: 4px; right: 2px; opacity: .45; }
+.calc-item:hover .fav-btn, .calc-item .fav-btn:focus-visible, .calc-item .fav-btn.is-fav { opacity: 1; }
+.fav-calc-card { margin-top: 12px; }
+.fav-calc-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); column-gap: 12px; }
+.calc-actions { display: flex; align-items: center; gap: 6px; }
+.calc-actions .fav-btn { width: 40px; height: 40px; border: 1px solid var(--border); background: var(--surface); border-radius: 10px; }
+.nav-fav-calcs { margin: 0 8px 6px 26px; }
+.nav-fav-calcs[hidden] { display: none; }
+@media (hover: none) { .calc-item .fav-btn { opacity: 1; } }
