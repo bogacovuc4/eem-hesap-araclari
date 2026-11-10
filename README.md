@@ -15,7 +15,9 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 | Kontrol sistemleri | İkinci derece sistem (aşım, yükselme, tepe, yerleşme süresi; basamak yanıtı grafiği) |
 | Elektrik makineleri ve güç sistemleri | Transformatör (oran, akımlar, empedans yansıtma, verim–yük eğrisi, regülasyon) · Üç fazlı sistem (Y/Δ faz-hat değerleri, güçler) |
 | Enerji dağıtımı | Gerilim düşümü (tek/üç faz, reaktanslı, gereken kesit; çok yüklü hatta yük momentleri ve hat boyunca düşüm grafiği) · Kısa devre akımı (şebeke + trafo + kablo, I″k3, darbe akımı) · Topraklama direnci (çubuk, şerit, levha) |
+| Analog tümdevre tasarımı | MOSFET kare yasası (NMOS/PMOS; ID, bölge, gm, ro, gm·ro, çıkış karakteristiği; W/L boyutlandırma) · Ortak kaynaklı kuvvetlendirici (Av, Rout, bant genişliği, geçiş eğrisi) · Akım aynası (Iout, kopyalama hatası, Rout, Iout–Vout eğrisi) |
 | Haberleşme | AM / FM modülasyonu (güç, verim, Carson bant genişliği, Bessel spektrumu) |
+| Makine öğrenmesi | Karışıklık matrisi (doğruluk, kesinlik, duyarlılık, F1, MCC) · Doğrusal regresyon (en küçük kareler, R², saçılım grafiği, tahmin) · Aktivasyon fonksiyonları (sigmoid, tanh, ReLU, Leaky ReLU, softplus ve türevleri) |
 | Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Weibull ile yıllık enerji üretimi ve kapasite faktörü (grafikli) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
 | Sayısal | Karnaugh haritası ve mantık sadeleştirme (Quine–McCluskey, en sade SOP) · Sayı tabanı dönüştürücü (2/8/10/16, 64 bite kadar, ikinin tümleyeni, bit ızgarası) |
 | Bileşen kodları | Direnç renk kodu (3–6 bant, iki yönlü) · SMD direnç kodu (3 haneli, 4 haneli, R, EIA-96) · Kondansatör kodu (104K, 4n7, 4R7…) · Bobin kodu (renk ve yazılı, µH/nH) |
@@ -74,7 +76,7 @@ src/
     constants.js      c0, μ0, ε0, η0
     units.js          Birim tabloları, sayı ayrıştırma, SI ön ekli biçimlendirme
     validate.js       Girdi doğrulama mesajları
-    rf.js · rf2.js · circuit.js · circuit2.js · electronics.js · signals.js · power.js · distribution.js · comm.js · logic.js · wind.js · codes.js · digital.js
+    rf.js · rf2.js · circuit.js · circuit2.js · electronics.js · signals.js · power.js · distribution.js · analog.js · comm.js · ml.js · logic.js · wind.js · codes.js · digital.js
     math.js           Simpson integrali, Bessel J0, Gamma fonksiyonu, karmaşık sayılar
   ui/                 Arayüz
     dom.js            Küçük el() DOM oluşturucu

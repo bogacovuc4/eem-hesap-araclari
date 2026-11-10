@@ -59,11 +59,12 @@ function tableView(caption, headers, rows) {
  */
 export function lineChart({
   title, points, xLabel, yLabel, xFormat, yFormat, marker = null, refs = [], tableRows = null, tableHeaders = null,
-  reference = null, labels = null, yMinFixed = null,
+  reference = null, labels = null, yMinFixed = null, dots = null,
 }) {
+  // dots: [{x, y}] — ölçüm noktaları (saçılım), çizgiye ek olarak daire olarak çizilir
   // reference: ikinci (kesikli, sönük) seri; labels: [ana seri adı, referans adı] gösterge için
-  const xs = points.map((p) => p.x);
-  const ys = [...points, ...(reference ?? [])].map((p) => p.y);
+  const xs = [...points, ...(dots ?? [])].map((p) => p.x);
+  const ys = [...points, ...(reference ?? []), ...(dots ?? [])].map((p) => p.y);
   const xMin = Math.min(...xs);
   const xMax = Math.max(...xs);
   const yTicks = niceTicks(yMinFixed ?? Math.min(0, ...ys), Math.max(0, ...ys));
@@ -88,6 +89,7 @@ export function lineChart({
       s('text', { x: xScale(r.x) + 4, y: PAD.top + 10 + i * 13, class: 'chart-ref-label' }, r.label))),
     reference ? s('path', { d: toPath(reference), class: 'chart-line-ref' }) : null,
     s('path', { d: path, class: 'chart-line' }),
+    ...(dots ?? []).map((d) => s('circle', { cx: xScale(d.x), cy: yScale(d.y), r: 4, class: 'chart-data-dot' })),
     marker ? s('circle', { cx: xScale(marker.x), cy: yScale(marker.y), r: 5, class: 'chart-marker' }) : null,
     cross, hoverDot,
     s('rect', { x: PAD.left, y: PAD.top, width: W - PAD.left - PAD.right, height: H - PAD.top - PAD.bottom, class: 'chart-hit' }),

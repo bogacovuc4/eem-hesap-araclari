@@ -1095,3 +1095,15 @@ h1 {
   backdrop-filter: blur(14px) saturate(150%);
 }
 .home-header p, .calc-header p { color: var(--text-muted); margin-bottom: 0; }
+
+/* ---------- Karışıklık matrisi ---------- */
+.cm { border-collapse: separate; border-spacing: 6px; font-family: var(--mono); margin: 0 auto; }
+.cm th { padding: 4px 10px; color: var(--text-muted); font-weight: 600; font-size: .85rem; font-family: var(--sans); }
+.cm-corner { font-size: .75rem !important; vertical-align: bottom; }
+.cm-cell { width: 110px; height: 76px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+.cm-cell .cm-name { display: block; font-size: .78rem; font-weight: 700; letter-spacing: .06em; color: var(--text-muted); }
+.cm-cell .cm-val { display: block; font-size: 1.5rem; font-weight: 700; color: var(--text); }
+.cm-good { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.cm-bad { background: color-mix(in srgb, var(--red) 14%, transparent); }
+.chart-data-dot { fill: var(--red); stroke: var(--surface-solid); stroke-width: 1.5; }
+@media (max-width: 760px) { .cm-cell { width: 84px; height: 64px; } }

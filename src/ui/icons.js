@@ -43,6 +43,15 @@ const PATHS = {
   ],
   sine: [['path', { d: 'M2 12c2.5-7 4.5-7 7 0s4.5 7 7 0 3.5-5 6-5' }]],
   target: [['circle', { cx: 12, cy: 12, r: 9 }], ['circle', { cx: 12, cy: 12, r: 5 }], ['circle', { cx: 12, cy: 12, r: 1 }]],
+  network: [
+    ['circle', { cx: 5, cy: 6, r: 2 }], ['circle', { cx: 5, cy: 18, r: 2 }], ['circle', { cx: 12, cy: 12, r: 2 }],
+    ['circle', { cx: 19, cy: 6, r: 2 }], ['circle', { cx: 19, cy: 18, r: 2 }],
+    ['path', { d: 'M7 6.8 10.2 11M7 17.2l3.2-4.2M13.8 11 17 6.8M13.8 13l3.2 4.2' }],
+  ],
+  ic: [
+    ['rect', { x: 6, y: 6, width: 12, height: 12, rx: 1.5 }],
+    ['path', { d: 'M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10l4 2-4 2z' }],
+  ],
   pylon: [['path', { d: 'M8 22 12 2l4 20M5 7h14M6.5 12h11M9 7l6 5M15 7l-6 5M9.6 14h4.8' }]],
   bolt: [['path', { d: 'M13 2 4 14h7l-1 8 9-12h-7z' }]],
   broadcast: [

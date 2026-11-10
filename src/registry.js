@@ -49,6 +49,12 @@ import modulation from './ui/comm/modulation.js';
 import voltageDrop from './ui/distribution/voltage-drop.js';
 import shortCircuit from './ui/distribution/short-circuit.js';
 import grounding from './ui/distribution/grounding.js';
+import confusion from './ui/ml/confusion.js';
+import regression from './ui/ml/regression.js';
+import activationFn from './ui/ml/activation.js';
+import mosfetCalc from './ui/analog/mosfet.js';
+import commonSourceAmp from './ui/analog/common-source.js';
+import currentMirrorCalc from './ui/analog/current-mirror.js';
 
 export const categories = [
   {
@@ -94,10 +100,22 @@ export const categories = [
     calculators: [voltageDrop, shortCircuit, grounding],
   },
   {
+    id: 'analog',
+    icon: 'ic',
+    title: 'Analog tümdevre tasarımı',
+    calculators: [mosfetCalc, commonSourceAmp, currentMirrorCalc],
+  },
+  {
     id: 'comm',
     icon: 'broadcast',
     title: 'Haberleşme',
     calculators: [modulation],
+  },
+  {
+    id: 'ml',
+    icon: 'network',
+    title: 'Makine öğrenmesi',
+    calculators: [confusion, regression, activationFn],
   },
   {
     id: 'wind',
@@ -162,6 +180,12 @@ const META = {
   'distribution/voltage-drop': ['Tek/üç faz %e, hat kaybı, kesit; çok yüklü hatta yük momenti', 'gerilim dusumu yuzde e kesit yuk momenti dagitim hatti kablo kayip enerji dagitimi'],
   'distribution/short-circuit': ['Trafo, şebeke ve kablodan I″k3 ve darbe akımı', 'kisa devre akimi iec 60909 trafo uk darbe akimi kesme kapasitesi'],
   'distribution/grounding': ['Çubuk, şerit ve levha topraklayıcı direnci', 'topraklama direnci cubuk serit levha toprak ozdirenci elektrot'],
+  'ml/confusion': ['TP/FP/FN/TN → doğruluk, kesinlik, duyarlılık, F1, MCC', 'karisiklik matrisi confusion matrix precision recall f1 mcc dogruluk siniflandirma makine ogrenmesi'],
+  'ml/regression': ['Veri noktalarından en küçük kareler doğrusu ve R²', 'dogrusal regresyon en kucuk kareler r2 egim tahmin makine ogrenmesi'],
+  'ml/activation': ['Sigmoid, tanh, ReLU: değer, türev ve grafik', 'aktivasyon fonksiyonu sigmoid tanh relu leaky softplus sinir agi turev'],
+  'analog/mosfet': ['ID, bölge, gm, ro, gm·ro; W/L boyutlandırma', 'mosfet kare yasasi nmos pmos gm ro vov w/l doyma trioid analog tumdevre'],
+  'analog/common-source': ['Direnç yüklü CS kuvvetlendirici: Av, Rout, bant genişliği', 'ortak kaynakli kuvvetlendirici common source kazanc analog tumdevre'],
+  'analog/current-mirror': ['Iout, kopyalama hatası, Rout ve en küçük çıkış gerilimi', 'akim aynasi current mirror kaskod analog tumdevre'],
   'comm/modulation': ['AM güç ve verim, FM Carson ve Bessel spektrumu', 'am fm modulasyon carson bessel bant genisligi haberlesme'],
   'digital/karnaugh': ['Mintermlerden en sade SOP, K-haritası', 'karnaugh harita mantik sadelestirme quine mccluskey sop minterm'],
   'rf/link-budget': ['Alınan güç, bağlantı payı ve en büyük mesafe', 'friis link butce fspl yol kaybi menzil alinan guc eirp'],
