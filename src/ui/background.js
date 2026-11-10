@@ -88,26 +88,42 @@ function wantsVideo() {
   return true;
 }
 
+function createVideo() {
+  const video = document.createElement('video');
+  Object.assign(video, { muted: true, loop: true, autoplay: true, playsInline: true, preload: 'auto' });
+  video.className = 'bg-video';
+  const sources = BG_VIDEO.sources ?? [[BG_VIDEO.src, '']];
+  for (const [src, type] of sources) {
+    const source = document.createElement('source');
+    source.src = src;
+    if (type) source.type = type;
+    video.append(source);
+  }
+  if (BG_VIDEO.poster) video.poster = BG_VIDEO.poster;
+  // Hiçbir kaynak oynatılamazsa video kaldırılır, CSS sahnesi kalır.
+  video.lastElementChild.addEventListener('error', () => video.remove());
+  // Sekme arka plandayken oynatmayı durdur (pil ve işlemci tasarrufu)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) video.pause();
+    else video.play().catch(() => {});
+  });
+  return video;
+}
+
 export function mountBackground() {
   if (document.querySelector('.bg-scene')) return;
   const scene = document.createElement('div');
   scene.className = 'bg-scene';
   scene.setAttribute('aria-hidden', 'true');
   if (wantsVideo()) {
-    const video = document.createElement('video');
-    Object.assign(video, { muted: true, loop: true, autoplay: true, playsInline: true, preload: 'auto' });
-    video.className = 'bg-video';
-    const sources = BG_VIDEO.sources ?? [[BG_VIDEO.src, '']];
-    for (const [src, type] of sources) {
-      const source = document.createElement('source');
-      source.src = src;
-      if (type) source.type = type;
-      video.append(source);
-    }
-    if (BG_VIDEO.poster) video.poster = BG_VIDEO.poster;
-    // Hiçbir kaynak oynatılamazsa video kaldırılır, CSS sahnesi kalır.
-    video.lastElementChild.addEventListener('error', () => video.remove());
-    scene.append(video);
+    // Video (2–3 MB) sayfa ve hesaplayıcı yüklendikten sonra, tarayıcı boştayken eklenir:
+    // ilk açılışı yavaşlatmaz. O zamana kadar CSS sahnesi görünür.
+    const start = () => {
+      const idle = window.requestIdleCallback ?? ((cb) => setTimeout(cb, 1200));
+      idle(() => scene.prepend(createVideo()), { timeout: 4000 });
+    };
+    if (document.readyState === 'complete') start();
+    else window.addEventListener('load', start, { once: true });
   }
   for (const name of ['b1', 'b2', 'b3']) {
     const blob = document.createElement('div');

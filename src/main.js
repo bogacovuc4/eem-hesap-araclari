@@ -1,4 +1,4 @@
-import { categories, findCalculator, matches, allCalculators } from './registry.js';
+import { categories, findCalculator, matches, allCalculators, relatedCalculators } from './registry.js';
 import { initTheme } from './ui/theme.js';
 import { mountBackground } from './ui/background.js';
 import { el } from './ui/dom.js';
@@ -398,10 +398,59 @@ function renderHome() {
 // Yönlendirme
 // ---------------------------------------------------------------------------
 let lastPath = null;
+let routeToken = 0;
+
+/** Hesaplayıcı modülünü yükler (tarayıcı modülü önbellekte tutar; ikinci açılış anında olur). */
+function loadCalc(calc) {
+  calc.modulePromise ??= calc.load().then((m) => m.default).catch((err) => {
+    calc.modulePromise = null; // ağ hatasında sonraki denemede yeniden yükle
+    throw err;
+  });
+  return calc.modulePromise;
+}
+
+/** Sayfa altındaki ilgili hesaplayıcılar şeridi. */
+function relatedSection(calc) {
+  const list = relatedCalculators(calc.id);
+  if (!list.length) return null;
+  return el('section', { class: 'related' },
+    el('h2', { class: 'related-title' }, 'İlgili hesaplayıcılar'),
+    el('div', { class: 'related-grid' }, ...list.map((c) =>
+      el('a', { class: 'related-link', href: `#/${c.id}` },
+        el('span', { class: 'related-name' }, c.title),
+        el('span', { class: 'related-cat' }, c.category)))));
+}
+
+async function showCalculator(calc, token) {
+  let view;
+  try {
+    view = await loadCalc(calc);
+  } catch {
+    if (token !== routeToken) return;
+    content.replaceChildren(el('div', { class: 'card load-error' },
+      el('h1', {}, calc.title),
+      el('p', {}, 'Sayfa yüklenemedi. İnternet bağlantınızı kontrol edip yeniden deneyin.'),
+      el('button', { type: 'button', class: 'copy-btn', onClick: () => route() }, 'Yeniden dene')));
+    return;
+  }
+  if (token !== routeToken) return; // bu arada başka sayfaya geçildi
+  content.replaceChildren();
+  view.render(content);
+  const titleRow = content.querySelector('.calc-title-row');
+  if (titleRow) {
+    const actions = el('div', { class: 'calc-actions', 'data-fav-zone': 'page' }, calcStar(calc, 20));
+    const copy = titleRow.lastElementChild !== titleRow.querySelector('h1') ? titleRow.lastElementChild : null;
+    if (copy) actions.append(copy);
+    titleRow.append(actions);
+  }
+  const related = relatedSection(calc);
+  if (related) content.append(related);
+}
 
 function route() {
   const { path } = currentRoute();
   const calc = path ? findCalculator(path) : null;
+  const token = ++routeToken;
   markActive(calc ? calc.id : null);
 
   if (calc) homeBtn.removeAttribute('aria-current');
@@ -410,15 +459,9 @@ function route() {
     renderHome();
   } else {
     redrawHome = null;
-    content.replaceChildren();
-    calc.render(content);
-    const titleRow = content.querySelector('.calc-title-row');
-    if (titleRow) {
-      const actions = el('div', { class: 'calc-actions', 'data-fav-zone': 'page' }, calcStar(calc, 20));
-      const copy = titleRow.lastElementChild !== titleRow.querySelector('h1') ? titleRow.lastElementChild : null;
-      if (copy) actions.append(copy);
-      titleRow.append(actions);
-    }
+    // Modül önbellekte değilse kısa bir yükleniyor göstergesi
+    if (!calc.modulePromise) content.replaceChildren(el('p', { class: 'loading', role: 'status' }, 'Yükleniyor…'));
+    showCalculator(calc, token);
     document.title = `${calc.title} · EEM Hesap Araçları`;
     pushRecent(calc.id);
   }
@@ -427,6 +470,17 @@ function route() {
   if (path !== lastPath) window.scrollTo(0, 0);
   lastPath = path;
 }
+
+// Bağlantının üzerine gelince (ya da odaklanınca) hesaplayıcıyı önceden yükle: tıklayınca anında açılır.
+function prefetchFrom(event) {
+  const link = event.target.closest?.('a[href^="#/"]');
+  if (!link) return;
+  const calc = findCalculator(link.getAttribute('href').slice(2).split('?')[0]);
+  if (calc) loadCalc(calc).catch(() => {});
+}
+document.addEventListener('pointerover', prefetchFrom, { passive: true });
+document.addEventListener('focusin', prefetchFrom);
+document.addEventListener('touchstart', prefetchFrom, { passive: true });
 
 // ---------------------------------------------------------------------------
 // Mobil menü ve klavye kısayolu

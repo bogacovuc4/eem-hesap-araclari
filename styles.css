@@ -1203,3 +1203,57 @@ h1 {
 .nav-fav-calcs { margin: 0 8px 6px 26px; }
 .nav-fav-calcs[hidden] { display: none; }
 @media (hover: none) { .calc-item .fav-btn { opacity: 1; } }
+
+
+/* ---------- Tablolar (Başvuru, Routh) ---------- */
+.table-wrap { overflow-x: auto; margin: 0 -4px; padding: 0 4px; }
+.data-table { width: 100%; border-collapse: collapse; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.data-table caption { text-align: left; color: var(--text-muted); padding-bottom: 6px; }
+.data-table th, .data-table td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
+.data-table thead th { font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+.data-table tbody th { font-weight: 600; color: var(--text); }
+.data-table tbody tr:hover { background: var(--surface-2); }
+.data-table .copy-btn { opacity: .55; }
+.data-table tr:hover .copy-btn, .data-table .copy-btn:focus-visible { opacity: 1; }
+.table-note { margin: 10px 0 0; font-size: .85rem; color: var(--text-muted); }
+.series-row { display: grid; grid-template-columns: 48px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.series-values { font-family: var(--mono); font-size: .88rem; line-height: 1.7; }
+.routh-table td { font-family: var(--mono); }
+.routh-table td.first-col { font-weight: 700; }
+.routh-table td.sign-flip { color: var(--red); }
+.routh-table td.sign-flip::after { content: " ↯"; }
+.poly-text { font-family: var(--mono); margin: 0 0 10px; overflow-x: auto; }
+
+/* ---------- İlgili hesaplayıcılar ---------- */
+.related { margin-top: 28px; }
+.related-title {
+  margin: 0 0 10px;
+  font-size: .82rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.related-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 10px; }
+.related-link {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  text-decoration: none;
+  transition: border-color .15s, transform .15s;
+}
+.related-link:hover { border-color: var(--red); transform: translateY(-1px); }
+.related-link:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.related-name { font-weight: 600; color: var(--accent); }
+.related-link:hover .related-name { color: var(--red); }
+.related-cat { font-size: .8rem; color: var(--text-muted); }
+@media (prefers-reduced-motion: reduce) { .related-link { transition: none; } .related-link:hover { transform: none; } }
+
+/* ---------- Yükleniyor / hata ---------- */
+.loading { color: var(--text-muted); padding: 24px 0; animation: loading-fade 1s ease-in .15s both; }
+@keyframes loading-fade { from { opacity: 0; } to { opacity: 1; } }
+.load-error h1 { margin-top: 0; }

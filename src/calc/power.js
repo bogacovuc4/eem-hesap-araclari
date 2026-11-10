@@ -90,3 +90,27 @@ export function threePhaseFromImpedance({ vll, r, x, connection }) {
     phaseDeg: (Math.atan2(x, r) * 180) / Math.PI,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Asenkron (indüksiyon) motor
+// ---------------------------------------------------------------------------
+
+/**
+ * ns = 120·f/p (d/dk), kayma s = (ns − nr)/ns, rotor frekansı fr = s·f.
+ * Pout verilirse mil momenti T = Pout/ωr; Pin verilirse verim η = Pout/Pin.
+ */
+export function inductionMotor({ f, poles, nr, pout = null, pin = null }) {
+  assert(f > 0, 'Frekans sıfırdan büyük olmalı.');
+  assert(Number.isInteger(poles) && poles >= 2 && poles % 2 === 0, 'Kutup sayısı 2, 4, 6… gibi çift tam sayı olmalı.');
+  const ns = (120 * f) / poles;
+  assert(nr >= 0, 'Rotor hızı negatif olamaz.');
+  assert(nr < ns, `Motor çalışmasında rotor hızı senkron hızdan (${ns} d/dk) küçük olmalı.`);
+  const slip = (ns - nr) / ns;
+  const wr = (2 * Math.PI * nr) / 60;
+  const torque = pout !== null && wr > 0 ? pout / wr : null;
+  const efficiency = pout !== null && pin !== null ? pout / pin : null;
+  // Hava aralığı gücü ve rotor bakır kaybı (mekanik kayıplar ihmal: Pmek ≈ Pout)
+  const pag = pout !== null && slip < 1 ? pout / (1 - slip) : null;
+  const pcuRotor = pag !== null ? slip * pag : null;
+  return { ns, slip, fr: slip * f, wr, torque, efficiency, pag, pcuRotor };
+}

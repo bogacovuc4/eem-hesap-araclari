@@ -1,144 +1,199 @@
-// Tüm hesaplayıcıların listesi. Yeni bir hesaplayıcı eklemek için
-// görünüm modülünü içe aktarıp ilgili kategorinin listesine ekleyin.
-import wavelength from './ui/rf/wavelength.js';
-import microstrip from './ui/rf/microstrip.js';
-import spiral from './ui/rf/spiral.js';
-import decibel from './ui/rf/decibel.js';
-import vswr from './ui/rf/vswr.js';
-import linkBudget from './ui/rf/link-budget.js';
-import patch from './ui/rf/patch.js';
-import quarterWave from './ui/rf/quarter-wave.js';
-import lineInput from './ui/rf/line-input.js';
-import coax from './ui/rf/coax.js';
-import skinDepth from './ui/rf/skin-depth.js';
-import noise from './ui/rf/noise.js';
-import antennaBasics from './ui/rf/antenna-basics.js';
-import radar from './ui/rf/radar.js';
-import divider from './ui/circuit/divider.js';
-import led from './ui/circuit/led.js';
-import filter from './ui/circuit/filter.js';
-import rlc from './ui/circuit/rlc.js';
-import opamp from './ui/circuit/opamp.js';
-import combine from './ui/circuit/combine.js';
-import transient from './ui/circuit/transient.js';
-import parallelRlc from './ui/circuit/parallel-rlc.js';
-import impedanceCalc from './ui/circuit/impedance.js';
-import acPower from './ui/circuit/ac-power.js';
-import timer555 from './ui/circuit/timer555.js';
-import wheatstone from './ui/circuit/wheatstone.js';
-import thevenin from './ui/circuit/thevenin.js';
-import wyeDelta from './ui/circuit/wye-delta.js';
-import cable from './ui/circuit/cable.js';
-import turbine from './ui/wind/turbine.js';
-import density from './ui/wind/density.js';
-import profile from './ui/wind/profile.js';
-import aep from './ui/wind/aep.js';
-import resistorColor from './ui/codes/resistor-color.js';
-import smdResistor from './ui/codes/smd-resistor.js';
-import capacitorCode from './ui/codes/capacitor-code.js';
-import inductorCode from './ui/codes/inductor-code.js';
-import numberBase from './ui/digital/number-base.js';
-import karnaugh from './ui/digital/karnaugh.js';
-import bjtBias from './ui/electronics/bjt-bias.js';
-import fourier from './ui/signals/fourier.js';
-import bode from './ui/signals/bode.js';
-import secondOrder from './ui/control/second-order.js';
-import transformer from './ui/machines/transformer.js';
-import threePhase from './ui/machines/three-phase.js';
-import modulation from './ui/comm/modulation.js';
-import voltageDrop from './ui/distribution/voltage-drop.js';
-import shortCircuit from './ui/distribution/short-circuit.js';
-import grounding from './ui/distribution/grounding.js';
-import confusion from './ui/ml/confusion.js';
-import regression from './ui/ml/regression.js';
-import activationFn from './ui/ml/activation.js';
-import mosfetCalc from './ui/analog/mosfet.js';
-import commonSourceAmp from './ui/analog/common-source.js';
-import currentMirrorCalc from './ui/analog/current-mirror.js';
+// Tüm hesaplayıcıların listesi. Hesaplayıcı kodları yalnızca sayfası açılınca yüklenir
+// (dinamik import); burada yalnızca kimlik, başlık ve yükleyici durur. Yeni bir hesaplayıcı
+// eklemek için görünüm modülünü yazıp ilgili kategoriye calc(id, başlık, yükleyici) ekleyin.
+// id ve başlık modüldeki "export default { id, title }" ile aynı olmalı (test/registry.test.js denetler).
+
+const calc = (id, title, load) => ({ id, title, load });
 
 export const categories = [
   {
     id: 'rf',
     icon: 'antenna',
     title: 'Anten / RF',
-    calculators: [wavelength, microstrip, coax, lineInput, quarterWave, patch, spiral, antennaBasics, linkBudget, radar, noise, skinDepth, decibel, vswr],
+    calculators: [
+      calc('rf/wavelength', 'Dalga boyu ↔ frekans', () => import('./ui/rf/wavelength.js')),
+      calc('rf/microstrip', 'Mikroşerit hat', () => import('./ui/rf/microstrip.js')),
+      calc('rf/coax', 'Koaksiyel hat', () => import('./ui/rf/coax.js')),
+      calc('rf/line-input', 'Hat giriş empedansı', () => import('./ui/rf/line-input.js')),
+      calc('rf/quarter-wave', 'Çeyrek dalga dönüştürücü', () => import('./ui/rf/quarter-wave.js')),
+      calc('rf/patch', 'Yama (patch) anten', () => import('./ui/rf/patch.js')),
+      calc('rf/spiral', 'Arşimet spiral anten', () => import('./ui/rf/spiral.js')),
+      calc('rf/antenna-basics', 'Anten temel büyüklükleri', () => import('./ui/rf/antenna-basics.js')),
+      calc('rf/link-budget', 'Friis / link bütçesi', () => import('./ui/rf/link-budget.js')),
+      calc('rf/radar', 'Radar menzil denklemi', () => import('./ui/rf/radar.js')),
+      calc('rf/noise', 'Gürültü faktörü ve sıcaklığı', () => import('./ui/rf/noise.js')),
+      calc('rf/skin-depth', 'Deri derinliği', () => import('./ui/rf/skin-depth.js')),
+      calc('rf/decibel', 'dB çeviriciler', () => import('./ui/rf/decibel.js')),
+      calc('rf/vswr', 'VSWR ↔ |Γ| ↔ geri dönüş kaybı', () => import('./ui/rf/vswr.js')),
+    ],
   },
   {
     id: 'circuit',
     icon: 'chip',
     title: 'Devre',
-    calculators: [combine, divider, wyeDelta, thevenin, wheatstone, impedanceCalc, filter, transient, rlc, parallelRlc, acPower, opamp, timer555, led, cable],
+    calculators: [
+      calc('circuit/ohm', 'Ohm yasası ve güç', () => import('./ui/circuit/ohm.js')),
+      calc('circuit/phasor', 'Fazör / karmaşık sayı', () => import('./ui/circuit/phasor.js')),
+      calc('circuit/combine', 'Seri / paralel birleştirici', () => import('./ui/circuit/combine.js')),
+      calc('circuit/divider', 'Gerilim bölücü', () => import('./ui/circuit/divider.js')),
+      calc('circuit/wye-delta', 'Yıldız ↔ üçgen (Y–Δ)', () => import('./ui/circuit/wye-delta.js')),
+      calc('circuit/thevenin', 'Thevenin ↔ Norton', () => import('./ui/circuit/thevenin.js')),
+      calc('circuit/wheatstone', 'Wheatstone köprüsü', () => import('./ui/circuit/wheatstone.js')),
+      calc('circuit/impedance', 'Empedans (|Z| ve faz)', () => import('./ui/circuit/impedance.js')),
+      calc('circuit/filter', 'RC / RL filtre', () => import('./ui/circuit/filter.js')),
+      calc('circuit/transient', 'RC / RL geçici yanıt', () => import('./ui/circuit/transient.js')),
+      calc('circuit/rlc', 'Seri RLC rezonansı', () => import('./ui/circuit/rlc.js')),
+      calc('circuit/parallel-rlc', 'Paralel RLC rezonansı', () => import('./ui/circuit/parallel-rlc.js')),
+      calc('circuit/ac-power', 'AC güç ve PF düzeltme', () => import('./ui/circuit/ac-power.js')),
+      calc('circuit/opamp', 'Op-amp kuvvetlendirici', () => import('./ui/circuit/opamp.js')),
+      calc('circuit/timer555', '555 zamanlayıcı', () => import('./ui/circuit/timer555.js')),
+      calc('circuit/led', 'LED seri direnci', () => import('./ui/circuit/led.js')),
+      calc('circuit/cable', 'İletken kesiti', () => import('./ui/circuit/cable.js')),
+    ],
   },
   {
     id: 'electronics',
     icon: 'transistor',
     title: 'Elektronik',
-    calculators: [bjtBias],
+    calculators: [
+      calc('electronics/bjt-bias', 'BJT polarma (gerilim bölücü)', () => import('./ui/electronics/bjt-bias.js')),
+      calc('electronics/rectifier', 'Doğrultucu ve filtre', () => import('./ui/electronics/rectifier.js')),
+      calc('electronics/zener', 'Zener regülatör', () => import('./ui/electronics/zener.js')),
+    ],
+  },
+  {
+    id: 'em',
+    icon: 'magnet',
+    title: 'Elektromanyetik alanlar',
+    calculators: [
+      calc('em/point-charge', 'Noktasal yük ve Coulomb', () => import('./ui/em/point-charge.js')),
+      calc('em/capacitance', 'Kapasitans (geometri)', () => import('./ui/em/capacitance.js')),
+      calc('em/magnetic-field', 'Manyetik alan (Biot–Savart, Amper)', () => import('./ui/em/magnetic-field.js')),
+      calc('em/inductance', 'Endüktans (geometri)', () => import('./ui/em/inductance.js')),
+    ],
   },
   {
     id: 'signals',
     icon: 'sine',
     title: 'Sinyaller ve sistemler',
-    calculators: [fourier, bode],
+    calculators: [
+      calc('signals/fourier', 'Fourier serisi', () => import('./ui/signals/fourier.js')),
+      calc('signals/bode', 'Bode diyagramı', () => import('./ui/signals/bode.js')),
+      calc('signals/adc', 'ADC ve örnekleme', () => import('./ui/signals/adc.js')),
+    ],
   },
   {
     id: 'control',
     icon: 'target',
     title: 'Kontrol sistemleri',
-    calculators: [secondOrder],
+    calculators: [
+      calc('control/second-order', 'İkinci derece sistem', () => import('./ui/control/second-order.js')),
+      calc('control/routh', 'Routh–Hurwitz kararlılık', () => import('./ui/control/routh.js')),
+    ],
   },
   {
     id: 'power',
     icon: 'bolt',
     title: 'Elektrik makineleri ve güç sistemleri',
-    calculators: [transformer, threePhase],
+    calculators: [
+      calc('machines/transformer', 'Transformatör', () => import('./ui/machines/transformer.js')),
+      calc('machines/three-phase', 'Üç fazlı sistem', () => import('./ui/machines/three-phase.js')),
+      calc('machines/induction-motor', 'Asenkron motor', () => import('./ui/machines/induction-motor.js')),
+    ],
   },
   {
     id: 'distribution',
     icon: 'pylon',
     title: 'Enerji dağıtımı',
-    calculators: [voltageDrop, shortCircuit, grounding],
+    calculators: [
+      calc('distribution/voltage-drop', 'Gerilim düşümü', () => import('./ui/distribution/voltage-drop.js')),
+      calc('distribution/short-circuit', 'Kısa devre akımı', () => import('./ui/distribution/short-circuit.js')),
+      calc('distribution/grounding', 'Topraklama direnci', () => import('./ui/distribution/grounding.js')),
+    ],
   },
   {
     id: 'analog',
     icon: 'ic',
     title: 'Analog tümdevre tasarımı',
-    calculators: [mosfetCalc, commonSourceAmp, currentMirrorCalc],
+    calculators: [
+      calc('analog/mosfet', 'MOSFET (kare yasası)', () => import('./ui/analog/mosfet.js')),
+      calc('analog/common-source', 'Ortak kaynaklı kuvvetlendirici', () => import('./ui/analog/common-source.js')),
+      calc('analog/current-mirror', 'Akım aynası', () => import('./ui/analog/current-mirror.js')),
+    ],
   },
   {
     id: 'comm',
     icon: 'broadcast',
     title: 'Haberleşme',
-    calculators: [modulation],
+    calculators: [
+      calc('comm/modulation', 'AM / FM modülasyonu', () => import('./ui/comm/modulation.js')),
+    ],
   },
   {
     id: 'ml',
     icon: 'network',
     title: 'Makine öğrenmesi',
-    calculators: [confusion, regression, activationFn],
+    calculators: [
+      calc('ml/confusion', 'Karışıklık matrisi ve metrikler', () => import('./ui/ml/confusion.js')),
+      calc('ml/regression', 'Doğrusal regresyon', () => import('./ui/ml/regression.js')),
+      calc('ml/activation', 'Aktivasyon fonksiyonları', () => import('./ui/ml/activation.js')),
+    ],
   },
   {
     id: 'wind',
     icon: 'wind',
     title: 'Rüzgâr enerjisi',
-    calculators: [turbine, aep, density, profile],
+    calculators: [
+      calc('wind/turbine', 'Türbin gücü', () => import('./ui/wind/turbine.js')),
+      calc('wind/aep', 'Yıllık enerji (Weibull)', () => import('./ui/wind/aep.js')),
+      calc('wind/density', 'Hava yoğunluğu', () => import('./ui/wind/density.js')),
+      calc('wind/profile', 'Rüzgâr hız profili', () => import('./ui/wind/profile.js')),
+    ],
   },
   {
     id: 'codes',
     icon: 'tag',
     title: 'Bileşen kodları',
-    calculators: [resistorColor, smdResistor, capacitorCode, inductorCode],
+    calculators: [
+      calc('codes/resistor-color', 'Direnç renk kodu', () => import('./ui/codes/resistor-color.js')),
+      calc('codes/smd-resistor', 'SMD direnç kodu', () => import('./ui/codes/smd-resistor.js')),
+      calc('codes/capacitor', 'Kondansatör kodu', () => import('./ui/codes/capacitor-code.js')),
+      calc('codes/inductor', 'Bobin kodu', () => import('./ui/codes/inductor-code.js')),
+    ],
   },
   {
     id: 'digital',
     icon: 'binary',
     title: 'Sayısal',
-    calculators: [karnaugh, numberBase],
+    calculators: [
+      calc('digital/karnaugh', 'Karnaugh / mantık sadeleştirme', () => import('./ui/digital/karnaugh.js')),
+      calc('digital/number-base', 'Sayı tabanı dönüştürücü', () => import('./ui/digital/number-base.js')),
+    ],
+  },
+  {
+    id: 'reference',
+    icon: 'book',
+    title: 'Başvuru',
+    calculators: [
+      calc('reference/tables', 'Sabitler ve tablolar', () => import('./ui/reference/tables.js')),
+    ],
   },
 ];
 
 // Arama ve ana sayfa için kısa açıklamalar ve ek anahtar kelimeler.
 const META = {
+  'circuit/ohm': ['V, I, R, P: bilinen ikisinden diğerleri', 'ohm yasasi gerilim akim direnc guc watt v=ir temel'],
+  'circuit/phasor': ['Dikdörtgen ↔ kutupsal, dört işlem, paralel bağlama', 'fazor karmasik sayi kompleks polar kutupsal dikdortgen aci genlik j eslenik'],
+  'electronics/rectifier': ['Yarım/tam dalga, köprü: Vdc, ripple, PIV', 'dogrultucu yarim dalga tam dalga kopru diyot ripple dalgalanma filtre kondansator piv'],
+  'electronics/zener': ['Zener regülatör analizi ve Rs tasarımı', 'zener diyot regulator gerilim sabitleme seri direnc'],
+  'em/point-charge': ['Noktasal yükün E alanı, potansiyeli, Coulomb kuvveti', 'coulomb kuvvet elektrik alan potansiyel noktasal yuk elektromanyetik elektrostatik'],
+  'em/capacitance': ['Paralel levha, koaksiyel, küresel kondansatör', 'kapasitans kondansator paralel levha koaksiyel kuresel dielektrik enerji elektromanyetik'],
+  'em/magnetic-field': ['Tel, halka, solenoid ve toroidin B alanı', 'manyetik alan biot savart amper solenoid toroid tel halka tesla akı yogunlugu elektromanyetik'],
+  'em/inductance': ['Solenoid, toroid, koaksiyel hat endüktansı', 'enduktans bobin solenoid toroid koaksiyel sarim enerji elektromanyetik'],
+  'signals/adc': ['LSB, çıkış kodu, SQNR, Nyquist ve örtüşme', 'adc analog dijital donusturucu ornekleme nyquist ortusme aliasing cozunurluk bit lsb sqnr kuantalama'],
+  'control/routh': ['Routh tablosu, sağ yarı düzlem kökleri', 'routh hurwitz kararlilik karakteristik polinom kok kontrol'],
+  'machines/induction-motor': ['Senkron hız, kayma, moment, verim', 'asenkron induksiyon motor kayma senkron hiz kutup moment tork verim'],
+  'reference/tables': ['Sabitler, SI ön ekleri, özdirenç, εr, AWG, E12/E24', 'sabitler tablo fiziksel sabit si on ek ozdirenc dielektrik awg tel e12 e24 bakir'],
   'rf/wavelength': ['Frekanstan dalga boyu, dalga boyundan frekans (εr ile)', 'lambda frekans dalga boyu ghz mhz'],
   'rf/microstrip': ['W, h, εr → Z0 ve εeff; Z0 → W sentezi', 'mikroserit microstrip empedans pcb hat genişlik fr4'],
   'rf/spiral': ['İç/dış yarıçaptan yaklaşık çalışma bandı', 'anten spiral arsimet bant genis bant'],
@@ -229,4 +284,54 @@ export function findCalculator(id) {
     if (found) return found;
   }
   return null;
+}
+
+// Sayfa altındaki "İlgili hesaplayıcılar": önce bu elle seçilmiş (dersler arası) bağlar,
+// sonra aynı dersteki komşu hesaplayıcılar.
+const RELATED = {
+  'circuit/ohm': ['circuit/divider', 'circuit/combine', 'circuit/led', 'reference/tables'],
+  'circuit/phasor': ['circuit/impedance', 'circuit/ac-power', 'rf/line-input', 'machines/three-phase'],
+  'circuit/impedance': ['circuit/phasor', 'circuit/ac-power'],
+  'circuit/ac-power': ['circuit/phasor', 'machines/three-phase'],
+  'circuit/rlc': ['control/second-order', 'circuit/parallel-rlc'],
+  'circuit/filter': ['signals/bode', 'circuit/transient'],
+  'circuit/cable': ['distribution/voltage-drop', 'reference/tables'],
+  'circuit/combine': ['em/capacitance', 'em/inductance'],
+  'electronics/rectifier': ['electronics/zener', 'machines/transformer', 'circuit/transient'],
+  'electronics/zener': ['electronics/rectifier', 'circuit/led'],
+  'electronics/bjt-bias': ['analog/mosfet', 'circuit/thevenin'],
+  'em/point-charge': ['em/capacitance', 'reference/tables'],
+  'em/capacitance': ['rf/coax', 'circuit/combine', 'codes/capacitor'],
+  'em/magnetic-field': ['em/inductance', 'machines/transformer'],
+  'em/inductance': ['em/magnetic-field', 'codes/inductor', 'rf/coax'],
+  'signals/adc': ['digital/number-base', 'signals/fourier'],
+  'signals/bode': ['control/routh', 'circuit/filter'],
+  'control/routh': ['control/second-order', 'signals/bode'],
+  'control/second-order': ['control/routh', 'circuit/rlc'],
+  'machines/induction-motor': ['machines/three-phase', 'machines/transformer'],
+  'machines/transformer': ['machines/induction-motor', 'electronics/rectifier'],
+  'distribution/voltage-drop': ['circuit/cable'],
+  'comm/modulation': ['signals/fourier', 'rf/link-budget', 'signals/adc'],
+  'rf/skin-depth': ['reference/tables'],
+  'rf/coax': ['em/capacitance', 'em/inductance'],
+  'analog/mosfet': ['electronics/bjt-bias'],
+  'reference/tables': ['codes/resistor-color', 'circuit/cable', 'rf/skin-depth'],
+};
+
+/** Bir hesaplayıcıya ilgili en çok `max` hesaplayıcı. */
+export function relatedCalculators(id, max = 6) {
+  const out = [];
+  const add = (c) => { if (c && c.id !== id && !out.includes(c)) out.push(c); };
+  for (const rid of RELATED[id] ?? []) add(findCalculator(rid));
+  const category = categories.find((c) => c.calculators.some((x) => x.id === id));
+  if (category) {
+    const list = category.calculators;
+    const at = list.findIndex((x) => x.id === id);
+    // Komşulardan başlayarak dışa doğru
+    for (let d = 1; d < list.length && out.length < max; d += 1) {
+      add(list[at + d]);
+      if (out.length < max) add(list[at - d]);
+    }
+  }
+  return out.slice(0, max);
 }

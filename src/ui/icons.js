@@ -55,6 +55,9 @@ const PATHS = {
     ['path', { d: 'M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4M10 10l4 2-4 2z' }],
   ],
   pylon: [['path', { d: 'M8 22 12 2l4 20M5 7h14M6.5 12h11M9 7l6 5M15 7l-6 5M9.6 14h4.8' }]],
+  magnet: [['path', { d: 'M6 3v8a6 6 0 0 0 12 0V3h-4v8a2 2 0 0 1-4 0V3z' }], ['path', { d: 'M6 7h4M14 7h4' }]],
+  book: [['path', { d: 'M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5v15A2.5 2.5 0 0 0 6.5 22H20v-5' }], ['path', { d: 'M8 7h8M8 11h6' }]],
+  arrow: [['path', { d: 'M5 12h14M13 6l6 6-6 6' }]],
   bolt: [['path', { d: 'M13 2 4 14h7l-1 8 9-12h-7z' }]],
   broadcast: [
     ['circle', { cx: 12, cy: 12, r: 2 }],

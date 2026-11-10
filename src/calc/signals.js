@@ -230,3 +230,104 @@ export function secondOrderMetrics({ zeta, wn, band = 0.02 }) {
     tEnd,
   };
 }
+
+// ---------------------------------------------------------------------------
+// ADC: kuantalama ve örnekleme
+// ---------------------------------------------------------------------------
+
+/**
+ * N bitlik tek kutuplu ADC (0…Vref).
+ *   LSB = Vref/2ᴺ, kod = ⌊Vin/LSB⌋ (kırpma), ideal SQNR = 6,02N + 1,76 dB (tam ölçekli sinüs).
+ *   fs ve fmax verilirse Nyquist koşulu fs ≥ 2·fmax denetlenir.
+ */
+export function adcAnalysis({ bits, vref, vin = null, fs = null, fmax = null }) {
+  assert(Number.isInteger(bits) && bits >= 1 && bits <= 32, 'Bit sayısı 1–32 arasında tam sayı olmalı.');
+  assert(vref > 0, 'Referans gerilimi sıfırdan büyük olmalı.');
+  const levels = 2 ** bits;
+  const lsb = vref / levels;
+  let code = null;
+  let vq = null;
+  if (vin !== null) {
+    code = Math.min(levels - 1, Math.max(0, Math.floor(vin / lsb)));
+    vq = code * lsb;
+  }
+  const sqnr = 6.02 * bits + 1.76;
+  const nyquist = fs !== null ? fs / 2 : null;
+  const aliasOk = fs !== null && fmax !== null ? fs >= 2 * fmax : null;
+  // Örtüşme (alias) frekansı: |fmax − k·fs| en yakın katla
+  const alias = fs !== null && fmax !== null ? Math.abs(fmax - fs * Math.round(fmax / fs)) : null;
+  return { levels, lsb, code, vq, sqnr, nyquist, aliasOk, alias, fullScale: vref - lsb };
+}
+
+/** Tam sayıyı N bitlik ikili yazıya çevirir. */
+export function toBinary(n, bits) {
+  return n.toString(2).padStart(bits, '0');
+}
+
+// ---------------------------------------------------------------------------
+// Routh–Hurwitz kararlılık ölçütü
+// ---------------------------------------------------------------------------
+
+/**
+ * Karakteristik polinom katsayıları (en yüksek dereceden başlayarak) için Routh tablosu.
+ *   - İlk sütunda sıfır çıkarsa ε (küçük pozitif sayı) ile değiştirilir.
+ *   - Bütün satır sıfırsa bir üst satırdan yardımcı polinom kurulur ve türevi kullanılır
+ *     (eksene simetrik kökler; marjinal kararlılık olabilir).
+ * Dönüş: rows (her satır { power, values }), signChanges (= sağ yarı düzlemdeki kök sayısı),
+ *        stable, special ('epsilon' | 'zero-row' | null).
+ */
+export function routhTable(coeffs) {
+  assert(coeffs.length >= 2, 'En az iki katsayı girin (1. derece).');
+  assert(coeffs[0] !== 0, 'En yüksek dereceli katsayı sıfır olamaz.');
+  const EPS = 1e-9;
+  const n = coeffs.length - 1;
+  const width = Math.ceil((n + 1) / 2);
+  const pad = (row) => [...row, ...Array(width - row.length).fill(0)];
+  const rows = [
+    pad(coeffs.filter((_, k) => k % 2 === 0)),
+    pad(coeffs.filter((_, k) => k % 2 === 1)),
+  ];
+  let special = null;
+  const isZero = (x) => Math.abs(x) < 1e-12;
+
+  for (let r = 2; r <= n; r += 1) {
+    const a = rows[r - 2];
+    let b = rows[r - 1];
+    if (b.every(isZero)) {
+      // Yardımcı polinom: satır r−2'nin derecesi p = n − (r − 2)
+      special = special ?? 'zero-row';
+      const p = n - (r - 2);
+      b = pad(a.map((c, k) => c * (p - 2 * k)).filter((_, k) => p - 2 * k > 0));
+      rows[r - 1] = b;
+    }
+    if (isZero(b[0])) {
+      special = special ?? 'epsilon';
+      b = [EPS, ...b.slice(1)];
+      rows[r - 1] = b;
+    }
+    const next = [];
+    for (let k = 0; k < width - 1; k += 1) {
+      next.push((b[0] * a[k + 1] - a[0] * b[k + 1]) / b[0]);
+    }
+    rows.push(pad(next));
+  }
+  // Son satır da tamamen sıfır olabilir (ör. s¹ satırı sıfır) — yukarıdaki döngü bunu kapsar.
+  if (rows[n] && isZero(rows[n][0])) {
+    special = special ?? 'epsilon';
+    rows[n][0] = EPS;
+  }
+  const first = rows.slice(0, n + 1).map((row) => row[0]);
+  let signChanges = 0;
+  for (let k = 1; k < first.length; k += 1) {
+    if (Math.sign(first[k]) !== Math.sign(first[k - 1])) signChanges += 1;
+  }
+  const allSameSign = coeffs.every((c) => Math.sign(c) === Math.sign(coeffs[0]));
+  return {
+    rows: rows.slice(0, n + 1).map((values, k) => ({ power: n - k, values })),
+    firstColumn: first,
+    signChanges,
+    stable: signChanges === 0 && special === null && allSameSign,
+    special,
+    allSameSign,
+  };
+}

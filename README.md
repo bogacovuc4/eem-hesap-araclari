@@ -9,11 +9,12 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 | Kategori | Hesaplayıcı |
 |---|---|
 | Anten / RF | Dalga boyu ↔ frekans · Mikroşerit hat (analiz + sentez, Hammerstad-Jensen) · Koaksiyel hat (analiz + sentez) · Hat giriş empedansı (karmaşık yük) · Çeyrek dalga dönüştürücü (bant genişliğiyle) · Anten temel büyüklükleri (Ae, dBd, uzak alan) · Radar menzil denklemi · Gürültü (NF ↔ Te, Friis kademe, kTB ve duyarlılık) · Deri derinliği (tel AC/DC direnci) · Yama (patch) anten tasarımı (Balanis iletim hattı modeli, G1/G12 ile kenar direnci ve girintili besleme) · Friis / link bütçesi (alınan güç, bağlantı payı, en büyük mesafe) · Arşimet spiral anten bandı · dB çeviriciler (dBm ↔ W, dB ↔ oran) · VSWR ↔ \|Γ\| ↔ geri dönüş kaybı |
-| Devre | Seri / paralel birleştirici (R, L, C) · Yıldız ↔ üçgen dönüşümü · Thevenin ↔ Norton · Wheatstone köprüsü · Empedans (|Z|, faz, güçler) · Paralel RLC · AC güç ve güç faktörü düzeltme (tek/üç faz) · 555 zamanlayıcı · İletken kesiti (gerilim düşümüne göre) · RC / RL geçici yanıt (grafikli) · Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
-| Elektronik | BJT gerilim bölücülü polarma (Q noktası, çalışma bölgesi, devre şeması, DC yük doğrusu) |
-| Sinyaller ve sistemler | Fourier serisi (kare/üçgen/testere, kısmi toplam ve harmonik grafikleri, THD) · Bode diyagramı (kutup/sıfır, genlik-faz, kazanç ve faz payı) |
-| Kontrol sistemleri | İkinci derece sistem (aşım, yükselme, tepe, yerleşme süresi; basamak yanıtı grafiği) |
-| Elektrik makineleri ve güç sistemleri | Transformatör (oran, akımlar, empedans yansıtma, verim–yük eğrisi, regülasyon) · Üç fazlı sistem (Y/Δ faz-hat değerleri, güçler) |
+| Devre | Ohm yasası ve güç (bilinen iki değerden) · Fazör / karmaşık sayı (dönüşüm, dört işlem, paralel bağlama) · Seri / paralel birleştirici (R, L, C) · Yıldız ↔ üçgen dönüşümü · Thevenin ↔ Norton · Wheatstone köprüsü · Empedans (|Z|, faz, güçler) · Paralel RLC · AC güç ve güç faktörü düzeltme (tek/üç faz) · 555 zamanlayıcı · İletken kesiti (gerilim düşümüne göre) · RC / RL geçici yanıt (grafikli) · Gerilim bölücü · LED seri direnci · RC / RL filtre kesim frekansı · Seri RLC rezonansı ve Q · Op-amp evirmeyen / eviren kazanç |
+| Elektronik | BJT gerilim bölücülü polarma (Q noktası, çalışma bölgesi, devre şeması, DC yük doğrusu) · Doğrultucu ve kondansatör filtre (yarım/tam dalga, köprü; Vdc, dalgalanma, PIV) · Zener regülatör (analiz ve Rs tasarımı) |
+| Elektromanyetik alanlar | Noktasal yük (E, V, Coulomb kuvveti) · Kapasitans (paralel levha, koaksiyel, küresel) · Manyetik alan (düz tel, halka, solenoid, toroid) · Endüktans (solenoid, toroid, koaksiyel) |
+| Sinyaller ve sistemler | Fourier serisi (kare/üçgen/testere, kısmi toplam ve harmonik grafikleri, THD) · Bode diyagramı (kutup/sıfır, genlik-faz, kazanç ve faz payı) · ADC ve örnekleme (LSB, kod, SQNR, Nyquist ve örtüşme) |
+| Kontrol sistemleri | İkinci derece sistem (aşım, yükselme, tepe, yerleşme süresi; basamak yanıtı grafiği) · Routh–Hurwitz kararlılık tablosu (ε ve sıfır satır özel durumlarıyla) |
+| Elektrik makineleri ve güç sistemleri | Transformatör (oran, akımlar, empedans yansıtma, verim–yük eğrisi, regülasyon) · Üç fazlı sistem (Y/Δ faz-hat değerleri, güçler) · Asenkron motor (senkron hız, kayma, moment, verim) |
 | Enerji dağıtımı | Gerilim düşümü (tek/üç faz, reaktanslı, gereken kesit; çok yüklü hatta yük momentleri ve hat boyunca düşüm grafiği) · Kısa devre akımı (şebeke + trafo + kablo, I″k3, darbe akımı) · Topraklama direnci (çubuk, şerit, levha) |
 | Analog tümdevre tasarımı | MOSFET kare yasası (NMOS/PMOS; ID, bölge, gm, ro, gm·ro, çıkış karakteristiği; W/L boyutlandırma) · Ortak kaynaklı kuvvetlendirici (Av, Rout, bant genişliği, geçiş eğrisi) · Akım aynası (Iout, kopyalama hatası, Rout, Iout–Vout eğrisi) |
 | Haberleşme | AM / FM modülasyonu (güç, verim, Carson bant genişliği, Bessel spektrumu) |
@@ -21,12 +22,14 @@ Elektrik-elektronik mühendisliği derslerinde sık yapılan hesapları tek yerd
 | Rüzgâr enerjisi | Türbin gücü (Betz uyarılı) · Weibull ile yıllık enerji üretimi ve kapasite faktörü (grafikli) · Hava yoğunluğu (yükseklik + sıcaklık) · Rüzgâr hız profili (güç yasası, logaritmik) |
 | Sayısal | Karnaugh haritası ve mantık sadeleştirme (Quine–McCluskey, en sade SOP) · Sayı tabanı dönüştürücü (2/8/10/16, 64 bite kadar, ikinin tümleyeni, bit ızgarası) |
 | Bileşen kodları | Direnç renk kodu (3–6 bant, iki yönlü) · SMD direnç kodu (3 haneli, 4 haneli, R, EIA-96) · Kondansatör kodu (104K, 4n7, 4R7…) · Bobin kodu (renk ve yazılı, µH/nH) |
+| Başvuru | Sabitler ve tablolar (fiziksel sabitler, SI ön ekleri, özdirenç, εr, E12/E24, AWG) |
 
 Her hesaplayıcı formülü, geçerlilik aralığını ve varsayımları ekranda gösterir. Emin olunamayan yaklaşımlar arayüzde **doğrulanmalı** etiketiyle işaretlidir. Şu an bu etiket spiral anten tahmininde ve rüzgâr profilindeki tipik α / z₀ tablolarında var.
 
 ### Kullanım kolaylıkları
 
 - **Arama:** Kenar çubuğundaki ya da ana sayfadaki kutuya yazın (`/` tuşu odaklar, Enter ilk sonuca gider). Türkçe karakterler fark etmez: "direnc" de "Direnç"i bulur.
+- **İlgili hesaplayıcılar:** Her sayfanın altında aynı dersten ve ilişkili derslerden kısayollar vardır.
 - **Paylaşılabilir bağlantı:** Girdiğiniz değerler, birimler ve seçili sekme adres çubuğunda tutulur (ör. `#/rf/microstrip?mode=synthesis&z0=75`). "Bağlantıyı kopyala" ile aynı hesabı başkasına gönderebilirsiniz.
 - **Sonucu kopyalama:** Her sonuç satırının yanındaki düğme değeri panoya kopyalar.
 - **Son kullanılanlar:** Ana sayfada en son açtığınız hesaplayıcılar listelenir (yalnızca bu tarayıcıda saklanır).
@@ -164,7 +167,9 @@ diagram: (v, out) => dividerSchematic({ ...v, vout: out?.raw.vout }),
 
 Alan seçenekleri: `constraint` (`'positive'` varsayılan, `'nonnegative'`, `'any'`), `min`, `max` (dahil, SI cinsinden), `hint`, `name` (hata mesajlarındaki kısa ad). Birden çok mod (ör. analiz/sentez) için `modes` dizisine yeni öğe ekleyin; sekmeler otomatik oluşur. Doğrulanmamış bir yaklaşım için notlarda `verifyNote('...')` kullanın.
 
-**4. `src/registry.js` içinde içe aktarıp ilgili kategorinin `calculators` listesine ekleyin.** Menü ve ana sayfa kendiliğinden güncellenir.
+**4. `src/registry.js` içinde ilgili kategorinin `calculators` listesine `calc(id, başlık, () => import('./ui/...'))` satırı ekleyin** ve `META`'ya kısa açıklama ile arama kelimelerini yazın. Menü ve ana sayfa kendiliğinden güncellenir. İsterseniz `RELATED` tablosuna dersler arası ilgili sayfaları ekleyin.
+
+Hesaplayıcı kodları yalnızca sayfası açılınca (ya da menüde bağlantının üzerine gelince) yüklenir; ilk açılışta tüm hesaplayıcılar indirilmez. `id` ve başlığın modüldekiyle aynı olduğunu `test/registry.test.js` denetler.
 
 ## Gezinme ve favoriler
 
